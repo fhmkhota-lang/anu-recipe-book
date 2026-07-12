@@ -1,0 +1,593 @@
+<title>Anu's Recipe Book</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --paper:#FBF8F3; --card:#FFFFFF; --ink:#2A211B; --ink-soft:#6B5D51; --line:#E8E0D4;
+  --saffron:#C98A12; --saffron-deep:#A66E08; --saffron-wash:#F7EBD3;
+  --leaf:#47663F; --leaf-wash:#E9EFE4; --chilli:#B23A2B; --wash:#F3EDE2;
+  --shadow:0 1px 2px rgba(42,33,27,.06),0 8px 24px rgba(42,33,27,.09);
+  --display:"Didot","Bodoni 72","Bodoni MT","Playfair Display","Times New Roman",serif;
+  --body:"Charter","Georgia",serif;
+  --ui:system-ui,-apple-system,"Segoe UI",sans-serif;
+  --hand:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme: dark){:root{
+  --paper:#191411; --card:#221C17; --ink:#EFE7DB; --ink-soft:#A79684; --line:#3A3129;
+  --saffron:#E3A63A; --saffron-deep:#EFBE66; --saffron-wash:#33270F;
+  --leaf:#8FAE85; --leaf-wash:#232B1F; --chilli:#E07A63; --wash:#2C251E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}}
+:root[data-theme="light"]{
+  --paper:#FBF8F3; --card:#FFFFFF; --ink:#2A211B; --ink-soft:#6B5D51; --line:#E8E0D4;
+  --saffron:#C98A12; --saffron-deep:#A66E08; --saffron-wash:#F7EBD3;
+  --leaf:#47663F; --leaf-wash:#E9EFE4; --chilli:#B23A2B; --wash:#F3EDE2;
+  --shadow:0 1px 2px rgba(42,33,27,.06),0 8px 24px rgba(42,33,27,.09);
+}
+:root[data-theme="dark"]{
+  --paper:#191411; --card:#221C17; --ink:#EFE7DB; --ink-soft:#A79684; --line:#3A3129;
+  --saffron:#E3A63A; --saffron-deep:#EFBE66; --saffron-wash:#33270F;
+  --leaf:#8FAE85; --leaf-wash:#232B1F; --chilli:#E07A63; --wash:#2C251E;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font-family:var(--ui);cursor:pointer}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--saffron);outline-offset:2px}
+input{font-family:var(--ui)}
+.shell{max-width:1180px;margin:0 auto;padding:0 20px 96px}
+/* Masthead */
+.masthead{padding:44px 0 10px;text-align:center;border-bottom:3px double var(--line);margin-bottom:14px}
+.mast-note{font-family:var(--hand);color:var(--saffron-deep);font-size:15px;letter-spacing:.4px;margin:0 0 6px;transform:rotate(-1.2deg)}
+.masthead h1{font-family:var(--display);font-weight:500;font-size:clamp(38px,6.5vw,64px);letter-spacing:.01em;margin:0;line-height:1.05;text-wrap:balance}
+.masthead h1 em{font-style:italic;color:var(--saffron-deep)}
+.mast-sub{font-family:var(--ui);font-size:12.5px;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-soft);margin:12px 0 20px}
+.mast-sub b{color:var(--saffron-deep);font-weight:600}
+/* Tabs */
+.tabs{position:sticky;top:0;z-index:40;background:var(--paper);display:flex;gap:4px;justify-content:center;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{border:1px solid transparent;background:none;color:var(--ink-soft);font-size:14px;font-weight:600;padding:9px 16px;border-radius:999px;letter-spacing:.01em}
+.tab:hover{color:var(--ink);background:var(--wash)}
+.tab.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tab .cnt{display:inline-block;min-width:18px;font-size:11px;background:var(--saffron);color:#fff;border-radius:999px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+/* Search + chips */
+.searchbar{display:flex;gap:10px;margin:22px auto 14px;max-width:640px}
+.searchbar input{flex:1;padding:13px 18px;font-size:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink)}
+.searchbar input::placeholder{color:var(--ink-soft)}
+.btn{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600}
+.btn:hover{border-color:var(--saffron);color:var(--saffron-deep)}
+.btn.primary{background:var(--saffron);border-color:var(--saffron);color:#fff}
+.btn.primary:hover{background:var(--saffron-deep);border-color:var(--saffron-deep);color:#fff}
+.btn.ghost{background:none}
+.btn.danger{color:var(--chilli)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;scrollbar-width:thin}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px}
+.chip:hover{color:var(--ink);border-color:var(--saffron)}
+.chip.on{background:var(--saffron-wash);border-color:var(--saffron);color:var(--saffron-deep)}
+.result-note{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:2px 2px 12px}
+/* Grid + cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s,transform .15s;cursor:pointer}
+.card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.card .eyebrow{font-family:var(--ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--saffron-deep)}
+.card h3{font-family:var(--display);font-weight:500;font-size:21px;line-height:1.15;margin:0;text-wrap:balance}
+.card .prev{font-size:13.5px;color:var(--ink-soft);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:6px}
+.card .pg{font-family:var(--ui);font-size:11px;color:var(--ink-soft)}
+.heart{border:none;background:none;font-size:18px;line-height:1;color:var(--line);padding:4px}
+.heart.on{color:var(--chilli)}
+.heart:hover{color:var(--chilli)}
+.matchbar{height:5px;border-radius:99px;background:var(--wash);overflow:hidden}
+.matchbar i{display:block;height:100%;background:var(--leaf);border-radius:99px}
+.match-meta{display:flex;justify-content:space-between;font-family:var(--ui);font-size:11.5px;color:var(--ink-soft)}
+.match-meta b{color:var(--leaf)}
+.missing{font-size:12px;color:var(--ink-soft)}
+/* Detail overlay */
+.overlay{position:fixed;inset:0;background:rgba(26,19,14,.45);z-index:90;display:none;align-items:flex-start;justify-content:center;padding:4vh 14px;overflow-y:auto}
+.overlay.open{display:flex}
+.sheet{background:var(--paper);border:1px solid var(--line);border-radius:18px;max-width:720px;width:100%;box-shadow:var(--shadow);padding:30px clamp(18px,4vw,44px) 38px;position:relative}
+.sheet .eyebrow{font-family:var(--ui);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--saffron-deep)}
+.sheet h2{font-family:var(--display);font-weight:500;font-size:clamp(28px,5vw,40px);margin:6px 0 2px;line-height:1.08;text-wrap:balance}
+.sheet .src{font-family:var(--hand);font-size:14px;color:var(--ink-soft);margin:0 0 4px}
+.sheet .tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+.tagpill{font-family:var(--ui);font-size:11.5px;font-weight:600;background:var(--wash);color:var(--ink-soft);padding:4px 10px;border-radius:999px}
+.sheet-actions{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+.sheet h4{font-family:var(--ui);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--ink-soft);border-bottom:1px solid var(--line);padding-bottom:6px;margin:26px 0 10px}
+.ing{list-style:none;margin:0;padding:0}
+.ing li{display:flex;gap:10px;align-items:baseline;padding:5px 0;font-size:15.5px}
+.ing input[type=checkbox]{accent-color:var(--saffron);transform:translateY(1.5px)}
+.ing label{cursor:pointer}
+.ing input:checked + label{color:var(--ink-soft);text-decoration:line-through}
+.steps{margin:0;padding-left:0;list-style:none;counter-reset:st}
+.steps li{counter-increment:st;position:relative;padding:7px 0 7px 40px;font-size:15.5px;max-width:62ch}
+.steps li::before{content:counter(st);position:absolute;left:0;top:8px;width:24px;height:24px;border-radius:50%;background:var(--saffron-wash);color:var(--saffron-deep);font-family:var(--ui);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.sheet .note{background:var(--leaf-wash);border-left:3px solid var(--leaf);border-radius:0 10px 10px 0;padding:10px 14px;font-size:14px;margin-top:20px}
+.x{position:absolute;top:14px;right:14px;border:none;background:var(--wash);color:var(--ink);width:34px;height:34px;border-radius:50%;font-size:16px;font-weight:700}
+.x:hover{background:var(--line)}
+/* Planner */
+.plan-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:24px 0 4px}
+.plan-head h2,.section-h{font-family:var(--display);font-weight:500;font-size:30px;margin:0}
+.plan-sub{font-family:var(--ui);font-size:13.5px;color:var(--ink-soft);margin:4px 0 18px;max-width:70ch}
+.week{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:8px;min-height:130px}
+.day .dh{display:flex;justify-content:space-between;align-items:baseline}
+.day .dname{font-family:var(--ui);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--saffron-deep)}
+.meal{display:flex;align-items:center;gap:8px;background:var(--wash);border-radius:10px;padding:8px 10px}
+.meal .mn{flex:1;font-size:14px;font-weight:600;font-family:var(--ui);line-height:1.25;cursor:pointer}
+.meal .mn:hover{color:var(--saffron-deep)}
+.meal button{border:none;background:none;color:var(--ink-soft);font-size:13px;padding:2px}
+.meal button:hover{color:var(--chilli)}
+.addmeal{border:1.5px dashed var(--line);background:none;border-radius:10px;color:var(--ink-soft);font-size:13px;font-weight:600;padding:8px}
+.addmeal:hover{border-color:var(--saffron);color:var(--saffron-deep)}
+/* Fridge */
+.fridge-input{display:flex;gap:10px;max-width:640px;margin:0 0 10px}
+.fridge-input input{flex:1;padding:13px 18px;font-size:16px;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink)}
+.pantry-chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 18px}
+.pantry-chips .chip.have{background:var(--leaf-wash);border-color:var(--leaf);color:var(--leaf)}
+.fchip{display:inline-flex;align-items:center;gap:6px;background:var(--leaf-wash);border:1px solid var(--leaf);color:var(--leaf);font-family:var(--ui);font-size:13.5px;font-weight:600;padding:6px 12px;border-radius:999px}
+.fchip button{border:none;background:none;color:inherit;font-size:13px;padding:0}
+/* Shopping */
+.shop-group{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.shop-group h3{font-family:var(--display);font-size:20px;font-weight:500;margin:0 0 4px}
+.shop-group .gsub{font-family:var(--ui);font-size:12px;color:var(--ink-soft);margin:0 0 8px}
+.empty{padding:56px 20px;text-align:center;color:var(--ink-soft)}
+.empty .big{font-family:var(--display);font-size:26px;color:var(--ink);margin-bottom:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);font-family:var(--ui);font-size:14px;font-weight:600;padding:11px 22px;border-radius:999px;box-shadow:var(--shadow);transition:transform .25s;z-index:120}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.pickwrap{max-width:720px}
+.pick-list{display:flex;flex-direction:column;gap:6px;max-height:52vh;overflow-y:auto;margin-top:12px}
+.pick-item{display:flex;justify-content:space-between;gap:10px;align-items:baseline;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;cursor:pointer;font-size:15px}
+.pick-item:hover{border-color:var(--saffron)}
+.pick-item .pc{font-family:var(--ui);font-size:11px;color:var(--ink-soft);white-space:nowrap}
+.view{display:none}.view.on{display:block}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+@media (max-width:560px){.masthead{padding-top:30px}.sheet{padding:24px 18px 30px}}
+</style>
+<div class="shell">
+  <header class="masthead">
+    <p class="mast-note">from Anu&rsquo;s notebook, with love</p>
+    <h1>Anu&rsquo;s <em>Recipe</em> Book</h1>
+    <p class="mast-sub">188 handwritten pages &middot; <b id="rcount"></b> recipes &middot; transcribed &amp; searchable</p>
+  </header>
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-v="recipes">Recipes</button>
+    <button class="tab" data-v="planner">Week Planner <span class="cnt" id="plancnt" hidden></span></button>
+    <button class="tab" data-v="fridge">What&rsquo;s in the Fridge</button>
+    <button class="tab" data-v="shopping">Shopping List</button>
+  </nav>
+
+  <section class="view on" id="v-recipes">
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Search recipes, ingredients&hellip; try &ldquo;chicken&rdquo; or &ldquo;coconut&rdquo;" autocomplete="off">
+      <button class="btn" id="luckyBtn" title="Pick a random recipe">Surprise me</button>
+    </div>
+    <div class="chips" id="catchips"></div>
+    <p class="result-note" id="rnote"></p>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="view" id="v-planner">
+    <div class="plan-head">
+      <h2>The week ahead</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="autofillBtn">Fill empty days for me</button>
+        <button class="btn ghost danger" id="clearWeekBtn">Clear week</button>
+      </div>
+    </div>
+    <p class="plan-sub">Tap &ldquo;add a dish&rdquo; on any day, or let the book choose. Your plan feeds the shopping list automatically.</p>
+    <div class="week" id="week"></div>
+  </section>
+
+  <section class="view" id="v-fridge">
+    <div class="plan-head"><h2>Cook with what you have</h2></div>
+    <p class="plan-sub">List what&rsquo;s in your fridge and pantry &mdash; the book ranks every recipe by how much of it you can already make. Basics like salt, oil and everyday spices are assumed.</p>
+    <div class="fridge-input">
+      <input id="fq" type="text" placeholder="e.g. chicken, cream, mushrooms &mdash; press Enter after each" autocomplete="off">
+      <button class="btn primary" id="faddBtn">Add</button>
+    </div>
+    <div class="pantry-chips" id="quickadd"></div>
+    <div class="pantry-chips" id="fchips"></div>
+    <p class="result-note" id="fnote"></p>
+    <div class="grid" id="fgrid"></div>
+  </section>
+
+  <section class="view" id="v-shopping">
+    <div class="plan-head">
+      <h2>Shopping list</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="copyListBtn">Copy list</button>
+      </div>
+    </div>
+    <p class="plan-sub">Built from your week planner &mdash; one group per planned dish. Tick things off as you shop.</p>
+    <div id="shoplist"></div>
+  </section>
+</div>
+<div class="overlay" id="overlay"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div class="overlay" id="pickoverlay"><div class="sheet pickwrap" id="picksheet" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const R = [
+{n:"Steers Saucy Chicken",c:"Chicken",t:["saucy","family favourite"],p:"p2",i:["1 chicken or chicken fillet, cubed","A few potatoes, cut into fat chips","2 tbsp Steers mustard sauce","3–4 tbsp Steers peri-peri sauce","1 tbsp Steers garlic sauce","1 tsp ginger garlic","1 tbsp dhana jeeru","Ground chilli to taste","Mayonnaise for tossing the chips","Mixed dry herbs","A few slices of butter"],m:["Add all the sauces and spices to the chicken and cook on low heat.","Cut the potatoes into fat chips and fry.","Toss the fried chips in mayonnaise and add to the chicken.","Place everything in a pan, sprinkle mixed dry herbs and add a few slices of butter.","Roast for 10–15 minutes."]},
+{n:"Steers Saucy Chicken (spice-mix version)",c:"Chicken",t:["saucy","marinade"],p:"p51",i:["2 tbsp Steers tikka","2 tsp peri-peri marinade","1 tsp pepper","1 tsp lemon & herb","1/2 tsp salt","1/2 tsp chilli flakes","1 tsp Portuguese spice","1 tsp tandoori spice","1 tsp garlic","1 tsp ginger garlic","1 tsp dried parsley","1 tsp red chilli paste","1 tbsp tomato paste","Juice of half a lemon","1 tbsp olive oil","Garlic butter for cooking"],m:["Mix everything into a marinade and coat the chicken.","Cook in garlic butter."]},
+{n:"Chicken Potato Pops",c:"Savouries & Snacks",t:["kids","fried"],p:"p3",i:["1/2 kg chicken fillet, cubed","2 potatoes, cubed","1 tsp crushed green chillies","1 tsp salt","1/2 tsp garlic","Egg for dipping","Breadcrumbs"],m:["Mix all the ingredients together.","Pierce chicken and potato cubes alternately onto toothpicks.","Bake for 10 minutes at 180°C.","Dip in egg and breadcrumbs, then shallow fry."]},
+{n:"Chicken Jalfrezie",c:"Chicken",t:["curry","coconut"],p:"p3",i:["1 kg chicken","2 tsp chilli garlic paste (marinade)","2 tsp red chilli (marinade)","2 tsp salt (marinade)","8 tbsp lemon juice (marinade)","Ghee","1 onion, sliced","1/2 cup peppers","1 tsp chilli garlic paste","2 tsp red chilli","2 tsp crushed jeeru","1/2 tsp arad (turmeric)","1 tsp salt, to taste","8 tbsp tomato puree","400 ml coconut cream","Dhania to garnish"],m:["Marinate the chicken in chilli garlic paste, red chilli, salt and lemon juice, then cook.","In a separate pot, fry the onions and peppers in ghee with the spices.","Add the tomato puree and cook a few minutes.","Add the coconut cream and simmer.","Add the cooked chicken and simmer 5–10 minutes. Garnish with dhania."]},
+{n:"Mince & Spaghetti",c:"Meat & Mince",t:["weeknight","kids"],p:"p5",i:["Mince, washed","1 onion (vagaar)","1 tsp ginger garlic","1 tsp salt","3 tsp mixed/red masala","1/4 tsp arad (turmeric)","1/2 tsp dhana","1/2 tsp jeeru","1 grated tomato","Tomato paste (about 1/4 cup)","1 tin spaghetti in tomato sauce","Bread and cheese, to serve"],m:["Fry the onion vagaar. Add the mince and ginger garlic.","Once the water has cooked out, add the salt, masala, arad, dhana and jeeru.","Add the grated tomato and tomato paste; cook until the water is out.","Stir in the tinned spaghetti.","Serve with bread and cheese."]},
+{n:"Butter Chicken",c:"Chicken",t:["curry","creamy","family favourite"],p:"p6",i:["500 g chicken, cubed","1 tsp Lazeez masala (marinade)","50 g butter","1 tsp red chillies","1/2 tsp garam masala","1/4 tsp dhana jeeru","1/2 cup tomato puree","1/2 tsp salt","1/2 tbsp brown sugar","Fresh cream"],m:["Cube the chicken and marinate with the Lazeez masala.","Cook in the butter.","Add the red chillies, garam masala, dhana jeeru, tomato puree, salt and brown sugar.","Braise until well done.","Add fresh cream, simmer and serve."]},
+{n:"Mince & Butter Beans",c:"Meat & Mince",t:["curry","weeknight"],p:"p7",i:["1/2 kg mince","1 onion (vagaar)","1 level tsp ginger garlic","2 1/2 tsp masala","1/4 tsp arad (turmeric)","1/4 tsp dhana","1/4 tsp jeeru","1 tsp salt","1 tomato","4 tbsp passata","1 tin butter beans","Potatoes, fried","A little food colour"],m:["Fry the onion vagaar. Add the mince and ginger garlic; cook until the water is gone.","Add the masala, arad, dhana, jeeru and salt.","Add the tomato and passata.","Fry the potatoes; add the potatoes and butter beans.","Finish with a little colour."]},
+{n:"Red Chicken",c:"Chicken",t:["grilled","saucy"],p:"p8",i:["Chicken","1/2 tsp ginger garlic","1 tsp tikka (Amina's)","2 tbsp Steers tikka sauce","1/2 tsp salt","1/4 tsp dhana jeeru","1 tbsp lemon juice","1 tsp vinegar","1/2 cup tomato sauce","3 tbsp passata","Ghee and oil","Maizena mixed with water, to thicken"],m:["Combine everything with the chicken and cook in ghee and oil.","Grill with the gravy spooned over.","Thicken the gravy with the maizena mixture."]},
+{n:"Steak Stir Fry",c:"Meat & Mince",t:["noodles","stir fry"],p:"p9",i:["Steak, cut in strips","Oil and ghee","1/2 tsp ginger garlic","1/2 tsp green masala","1/2 tsp salt","1/4 tsp pepper","1/2 tsp peppersteak spice","1/2 tsp tenderiser","3 tsp Nandos sauces (all different)","Vegetables","Noodles","Dhania","Soy sauce","1/2 cup water + 2 tsp maizena"],m:["Cook the steak strips in oil and ghee with all the spices and Nandos sauces.","Add the veg when the meat is soft and let it cook.","Add the noodles once the steak is soft.","Finish with dhania, soy sauce, and the water-maizena mixture to bring it together."]},
+{n:"Bolognaise Bake",c:"Meat & Mince",t:["bake","kids"],p:"p11",i:["Mince","1 onion (vagaar)","Jeeru","1/2 tsp ginger garlic","1 tsp salt","1/2 tsp dhana jeeru","1 1/2 tsp red masala","1/4 tsp arad (turmeric)","1 tomato","Peppers","Mustard sauce and tomato sauce","Cooked spaghetti","3 potatoes, mashed","Cheese"],m:["Fry the onion vagaar with jeeru and ginger garlic.","Add the mince; wait until the water is out.","Add salt, dhana jeeru, red masala and arad. Add the tomato and peppers.","Stir in mustard and tomato sauce, then the cooked spaghetti.","Layer in a dish with mash on top and finish with cheese; bake until golden."]},
+{n:"Salt & Pepper Steak",c:"Meat & Mince",t:["quick"],p:"p12",i:["Steak","1/2 tsp salt","1/2 tsp pepper","1 tsp peppersteak spice","1/2 tsp green masala","1/2 tsp mustard powder","1 onion, in thick pieces","Potato"],m:["Marinate the steak in the spices with the onion for an hour.","Cook, adding the potato."]},
+{n:"Tomato Chutney",c:"Sauces & Chutneys",t:["side"],p:"p13",i:["1 onion","1 tsp green masala","1/2 tsp garlic","3–4 tomatoes","Masalas","Sugar","Curry leaves"],m:["Fry the onion; add the green masala and garlic when the onion is done.","Add the tomatoes, masalas and a little sugar (it may be strong — taste as you go).","Add curry leaves and cook down."]},
+{n:"Rutney (Chutney) Steak",c:"Meat & Mince",t:["saucy"],p:"p14",i:["Steak","1/2 tsp ginger garlic","1 tsp achaar masala","1 tsp masala","1/2 tsp salt","Pinch of arad (turmeric)","1/2 tsp dhana jeeru","1 onion","Oil","Tomato puree","5 tbsp samoosa chutney"],m:["Cook the steak with the spices and onion in some oil.","When the steak is soft, add the tomato puree and samoosa chutney.","Let it simmer 5–7 minutes."]},
+{n:"Chicken Corn Soup",c:"Soups",t:["winter","creamy"],p:"p15",i:["1 cup chicken (± 2 pieces)","1 tsp ginger garlic","1 tbsp ghee","1 tsp salt","1 tsp pepper","1/2 tsp peppersteak spice","1 tsp green masala","2 tsp mustard powder","1 cinnamon stick","1/2 tin creamstyle sweetcorn","± 1/2 litre milk","1 packet Knorr soup (veg or chicken)","2 tbsp maizena"],m:["Cook the chicken in ghee with the ginger garlic, spices and cinnamon stick.","Add the creamstyle sweetcorn and milk.","Whisk in the packet soup and simmer.","Thicken with the maizena."]},
+{n:"Steak & Dumplings",c:"Meat & Mince",t:["winter","comfort"],p:"p16",i:["Steak","Ginger garlic, salt, pepper, peppersteak spice","1 onion","Peppercorns","Potato","1 carrot, chopped","1 tomato","Dumplings: 1 1/2 cups flour","2 1/4 tsp baking powder","3/4 tsp salt","Dry parsley","Whole jeeru","50 g butter"],m:["Cook the steak with ginger garlic, salt, pepper, peppersteak spice, onion and peppercorns, together with the potato.","When soft, add the chopped carrot and tomato and leave to cook.","For the dumplings: rub the butter into the flour, baking powder, salt, parsley and jeeru to breadcrumbs; add warm water until sticky.","Fifteen minutes before eating, drop the dumplings into salted boiling liquid, close the pot and steam on low for 10–15 minutes."]},
+{n:"Mince Kebabs",c:"Meat & Mince",t:["kebabs","bake"],p:"p17",i:["Mince","1 onion, fried","1/2 tsp green masala","1/2 tsp ginger garlic","Normal masalas","Dhania","Nutmeg","1 egg","2 slices bread, grated","1 tsp baking powder"],m:["Fry the onion. Mix the mince with all the spices, dhania, nutmeg, egg, grated bread and baking powder.","Shape into kebabs.","Bake at 180°C for half an hour, covered with foil."]},
+{n:"Grilled Chicken",c:"Chicken",t:["grilled","family favourite"],p:"p18",i:["1 whole chicken","1 tbsp ginger garlic","1 tbsp salt","1 tbsp dhana jeeru","1 tbsp fine red chillies","1 tsp aromat","1 tsp mustard powder","1 tsp lemon pepper","1/4 cup oil","1/4 cup mayonnaise","1/4 cup lemon juice","1/4 cup tomato puree","125 g butter"],m:["Marinate the chicken in everything except the butter.","Cook in the butter, then grill."]},
+{n:"Nandos Chicken",c:"Chicken",t:["quick","saucy"],p:"p19",i:["Chicken","Chicken spice","Lemon butter or garlic butter","Nandos sauce","1 tbsp fresh cream"],m:["Marinate the chicken in chicken spice.","Grill in lemon or garlic butter.","Put in a pot with Nandos sauce and the fresh cream; bring to a boil."]},
+{n:"Wedding Pasta",c:"Pasta & Bakes",t:["creamy","special occasion"],p:"p20",i:["1/2 kg steak, cubed","50 g butter + 2 tbsp oil","1/2 tsp ginger garlic","1/4 tsp black pepper","1/4 tsp steak & chop spice","1/2 tsp peppersteak spice","1 tbsp Worcester sauce","1 tbsp vinegar","1/4 tsp tenderiser","Julienne carrot","Green peppers","Corn","Cream","Pasta, cooked"],m:["Marinate the steak in the spices, Worcester sauce, vinegar and tenderiser.","Cook in the butter and oil.","When the steak is soft, add the carrot, peppers, corn and cream.","Toss through the pasta."]},
+{n:"Cream Chicken",c:"Chicken",t:["creamy","quick"],p:"p21",i:["1/2 kg chicken fillet","1/2 tsp ginger garlic","1/4 tsp green masala","1/2 tsp salt","1/4 tsp ground pepper","1/2 tsp peppersteak spice","4 tbsp mayonnaise","Ghee","Potato wedges"],m:["Marinate the fillet in the spices and mayonnaise.","Cook in ghee with potato wedges."]},
+{n:"T-Bone Steak",c:"Meat & Mince",t:["bake","weekend"],p:"p22",i:["1/2 kg steak or T-bone","1/2 tsp peppersteak spice","1/2 tsp ginger garlic","1/4 tsp salt and pepper","1 tsp braai seasoning","Lemon juice","Vinegar","Worcester sauce","Mayonnaise","Honey","Oil","Sweet chilli sauce"],m:["Marinate the steak in everything.","Cover with foil and bake at 180°C for one hour."]},
+{n:"Masala Steak",c:"Meat & Mince",t:["curry"],p:"p23",i:["Steak","1 onion (vagaar) + jeeru","Extra oil","Ginger garlic","Chohans spice","Salt","Dhana jeeru","Tenderiser","Arad (turmeric)","1 grated tomato"],m:["Make an onion vagaar with jeeru in a little extra oil.","Add the steak, ginger garlic, Chohans spice, salt, dhana jeeru, tenderiser and arad.","Add the grated tomato when mostly cooked and finish."]},
+{n:"Saucy Portuguese Chicken",c:"Chicken",t:["saucy","grilled"],p:"p24",i:["500 g chicken","1 tsp Robertsons chicken spice","1/2 tsp red chillies","1 tsp salt","1/2 tsp jeeru","1/2 tbsp lemon juice","1/2 tsp crushed garlic","Garlic butter and olive oil","Sauce: butter","Fresh cream","Nandos garlic peri-peri","2 tsp lemon juice","1/2 tsp parsley","1/2 tbsp tomato paste"],m:["Marinate the chicken in the spice, chillies, salt, jeeru, lemon juice and garlic.","Cook in garlic butter and olive oil.","Make the sauce: melt the butter with cream, Nandos garlic peri-peri, lemon juice, parsley and tomato paste.","Pour over the chicken and grill."]},
+{n:"Orange Pepper Chicken",c:"Chicken",t:["grilled","saucy"],p:"p25",i:["Chicken","1/4 cup yoghurt","1/2 tbsp crushed chilli","1/2 tbsp crushed garlic","2–3 tbsp orange pepper spice","Dhana jeeru","Salt","Tomato puree","Butter","Sauce: 1/4 cup tomato puree","1/4 cup fresh cream","1/2 tsp chilli powder","1/2 tsp crushed garlic","Salt and butter"],m:["Marinate the chicken for a few hours in the yoghurt, chilli, garlic, orange pepper spice, dhana jeeru, salt and tomato puree.","Cook in butter.","Boil the sauce ingredients together, pour over and grill in the oven."]},
+{n:"Dahi Kebabs",c:"Meat & Mince",t:["kebabs","Indian Delights"],p:"p26",i:["500 g mince","1 grated onion","1/2 tsp crushed black pepper","1/2 tsp crushed garlic","1 tbsp ghee","1 tbsp chopped spring onions or mint","1/2 tsp jeeru","1 tsp chilli","2 slices bread","Corn and peppers (optional)","Sauce: 1/3 cup yoghurt","2 tbsp tomato puree","1 tbsp red chutney","To serve: carrots, baby potatoes, boiled egg"],m:["Mix the mince with the onion, spices, ghee, spring onion and bread.","Shape and bake, foil-covered, at 180°C for 30 minutes.","Mix the sauce well and pour over.","Serve with carrots, baby potatoes and boiled egg."]},
+{n:"Garlic Butter Kebabs",c:"Meat & Mince",t:["kebabs","saucy"],p:"p27",i:["1/2 kg mince","1 large onion","1 tsp ground garlic","1 tsp salt","1 tsp dhana jeeru","1 tsp ground green chilli","1 tsp red chilli paste","1 egg","1 slice bread","Dhania","2–3 large potatoes, cubed and fried","Diced peppers","Garlic sauce: 65 g butter","3 tbsp water","1/4 tsp salt","1/4 tsp jeeru","1/2 cup milk","2 tbsp Steers garlic sauce","1/2 tsp chilli powder"],m:["Process the bread and onion, then the dhania. Mix everything with the mince.","Shape into kebabs and fry until brown.","Fry the cubed potatoes; add with the diced peppers.","Melt the garlic sauce ingredients together and pour over.","Bake, covered, for 20 minutes."]},
+{n:"Calistos-Style Chicken",c:"Chicken",t:["saucy","grilled"],p:"p28",i:["Chicken","1 thinly sliced onion","1/4 cup olive oil","2 tbsp vinegar","1/4 cup lemon juice","1 tsp paprika","1 tsp white pepper","1 tsp black pepper","1 tbsp garlic","Salt","Arad (turmeric)","Red chillies","Dhana jeeru","Steers spicy tikka","Parsley","Sour cream","Cajun spice","Sauce: 1 tbsp brown sugar","2 tbsp mayonnaise","1/2 cup fresh cream","Amina's Portugo marinade","2 tbsp lemon juice","2 tbsp butter","1 tsp dried parsley"],m:["Combine the chicken with the onion, oil, vinegar, lemon juice and all the spices.","Bake until done.","Bring the sauce ingredients to one boil on the stove.","Pour over the chicken and grill 15 minutes."]},
+{n:"Pizza Rice",c:"Rice & One-Pot",t:["bake","kids"],p:"p30",i:["1 1/2 cups rice","Salt and arad for boiling","2 chicken fillets, cubed","Salt","1 tbsp paprika","1 tsp chilli powder","2 tsp garlic","3 tbsp soya sauce","3 tbsp vinegar","1 tsp chilli sauce","1/2 tsp mixed herbs","1 cup cubed mushrooms","1 cup peppers","1 onion","Sweetcorn","1 cup tomato sauce","Cheese"],m:["Boil the rice with salt and arad.","Cook the chicken with the spices, soya sauce, vinegar and chilli sauce for 5–7 minutes.","Add the mushrooms, peppers, onion and sweetcorn.","Add the tomato sauce when done; cook until thick and dry.","Layer with the rice, top with cheese and bake."]},
+{n:"Brown Mushroom Chicken",c:"Chicken",t:["creamy","bake"],p:"p31",i:["1/2 kg fillet, thick strips","Ginger garlic","1/2 tsp salt","1/4 tsp white pepper","1/2 punnet brown mushrooms, thickly sliced","1/2 onion, finely sliced","1/2 tbsp crushed garlic","1/2 tsp ground green chilli","1/2 cup flour","3 tbsp oil","Sauce: 1 1/2 tbsp butter","1 1/2 tbsp flour","1/2 cup chicken broth","1/2 tbsp lemon juice","Pinch of pepper","1/4 cup milk","1/2 cup cream"],m:["Season the chicken with salt and pepper and coat in flour.","Sauté in half the oil until golden; transfer to a dish.","Wipe the pan, heat the remaining oil and sauté the onion and mushrooms until golden. Sauté the chilli and garlic ± 2 minutes; add to the dish.","For the sauce: melt the butter, whisk in the flour, then the broth, milk, lemon juice and pepper until smooth. Add the cream, bring to a boil and season.","Pour over, cover with foil and bake at 180°C for 25–30 minutes."]},
+{n:"Calistos Prego",c:"Chicken",t:["grilled","saucy"],p:"p33",i:["Chicken","1 tbsp prego spice","1 tbsp Calistos sauce","1 tbsp olive oil","Juice of half a lemon","Sauce: 25 g garlic butter","1/2 tsp paprika","1/4 tsp cayenne","1/8 cup Calistos sauce","1 tbsp mayonnaise"],m:["Marinate the chicken in the prego spice, Calistos sauce, olive oil and lemon.","Cook in the oven at 180°C for 35 minutes.","Cook the sauce ingredients together.","Pour over the chicken and grill."]},
+{n:"Chicken Kebabs",c:"Chicken",t:["kebabs"],p:"p34",i:["Chicken mince","1 tsp garlic/ginger","Green chilli","1 tbsp BBQ spice","1 tbsp chicken spice","Sprinkle of aromat","1 tsp dhana jeeru","1/4 tsp arad (turmeric)","Handful of dhania","Chives","1 tbsp ghee","1 finely chopped onion","Butter, oil and juice of half a lemon","Sauce: 2 tbsp mayonnaise","2 tbsp Nandos garlic peri-peri","Blob of butter","Lemon juice","Some water"],m:["Mix the kebab ingredients and shape.","Place in a pot with 1/2 cup water and steam on medium with the lid on.","When the water is almost dried out, add a blob of butter, oil and the lemon juice; allow to brown and cook.","Warm the sauce ingredients together and serve over."]},
+{n:"Mustard Chicken",c:"Chicken",t:["quick"],p:"p36",i:["Chicken","1/2 tsp aromat","1/2 tsp white pepper","1 tsp mustard powder","1/2 tsp ginger garlic","1/2 tbsp vinegar","Mayonnaise","1 1/2 tbsp ghee","1 green chilli","1/2 tsp pepper + 1/2 tsp ground jeeru (near the end)","1 tomato, cut in wedges"],m:["Cook the chicken with the aromat, white pepper, mustard powder, ginger garlic, vinegar, mayo, ghee and green chilli.","When almost done, add the pepper and ground jeeru.","Add the tomato wedges and finish."]},
+{n:"Sweet & Sour Stirfry",c:"Chicken",t:["noodles","stir fry","kids"],p:"p37",i:["Chicken","Green chillies","Garlic","Salt","Stir-fry vegetables","Pepper","Noodles","Sauce: 3/4 cup orange juice","1 tbsp maizena","1 tbsp soya sauce","3 tbsp tomato sauce","1/4 cup vinegar"],m:["Cook the chicken with green chillies, garlic and salt.","Stir-fry the veg with salt and pepper.","Whisk the sauce ingredients, add and let it thicken.","Toss with the noodles."]},
+{n:"Klim Soup",c:"Soups",t:["winter","creamy"],p:"p38",i:["2 chicken fillets, cubed","1/2 cup spaghetti, broken","1 tbsp green chillies","1 tsp salt","1/4 tsp arad (turmeric)","1 tsp whole jeeru","1 tsp fine dhana","1 tsp fine jeeru","1/2 tsp white pepper","Ghee","1/2 tin creamstyle sweetcorn","1 packet white onion soup","1/2 litre milk","1/2 litre water","2 big spoons Klim milk powder","Dhania"],m:["Cook the chicken with the spices in ghee until soft and cooked.","Add the creamstyle sweetcorn.","Liquidise the onion soup, milk, water and Klim; add and bring to a boil with the spaghetti.","Finish with dhania."]},
+{n:"Chicken Stir Fry",c:"Chicken",t:["noodles","stir fry"],p:"p39",i:["500 g chicken","Salt","1 tsp garlic paste","1 tsp garlic powder","1/2 tsp black pepper","1/4 tsp lemon pepper","1 tsp soy sauce","1 tsp Worcester sauce","Chilli sauce","Vegetables","1 tbsp sugar","Chilli flakes","Aromat","Mixed herbs","Spaghetti, cooked","Spring greens to garnish"],m:["Cook the chicken with the salt, garlic, peppers and sauces until done.","Add the veggies with salt, sugar, chilli flakes, black pepper, aromat, lemon pepper, soy, Worcester and mixed herbs.","Add the spaghetti last and toss.","Garnish with greens."]},
+{n:"Saucy Baked Chicken",c:"Chicken",t:["bake","saucy"],p:"p40",i:["Chicken","Red chilli paste","Ginger garlic","Aromat","Salt and pepper","2–3 tbsp mayonnaise","1/2 tsp dried chillies","2 tbsp Nandos bushveld sauce","1 tbsp Nandos extra hot sauce","2 tsp chicken spice","Fresh cream","Lemon slices","Black pepper","Dhania","Blobs of butter"],m:["Marinate the chicken in the pastes, spices, mayo, Nandos sauces and fresh cream.","Top with lemon slices, black pepper and dhania.","Bake covered with blobs of butter at 180°C for 35 minutes.","Remove the foil and let the water dry out."]},
+{n:"Creamy Masala Kebabs",c:"Meat & Mince",t:["kebabs","curry","creamy"],p:"p41",i:["500 g mince","1 chopped onion","Chopped dhania leaves","2 green chillies","1 slice bread","2 tbsp beaten egg","1 tsp ginger garlic","1 tsp black pepper","1/2 tsp ground dhana","1/4 tsp tandoori masala","1/4 tsp arad (turmeric)","1 tsp salt","Gravy: 3 onions, finely chopped","1/4 cup oil (use leftover kebab oil)","5 chopped tomatoes","1/4 cup yoghurt","1/4 cup cream","1 tsp ginger garlic","1–2 tbsp tomato paste","1 tsp red chilli powder","1 green chilli","1 cinnamon stick","1 elaichi (cardamom)","1/4 tsp arad","1 tsp dhana jeeru","1 tsp sugar","1 tsp garam masala (add last)","Salt"],m:["Combine the kebab ingredients and rest in the fridge; shape and fry.","For the gravy: fry the whole spices, add the onions and brown.","Add the tomatoes and dry up; add the ginger garlic and tomato paste.","Sprinkle in the salt, jeeru, chilli, arad and dhana; cook.","Add the yoghurt and sugar, then water; simmer the kebabs in the gravy.","Finish with the garam masala and cream."]},
+{n:"Red Pepper Chicken",c:"Chicken",t:["creamy","saucy"],p:"p43",i:["Chicken","1 tsp red masala","1/2 tsp salt","1 tbsp lemon juice","1 tbsp vinegar","Garlic","1/2 tsp chicken spice","1/2 tsp lemon pepper","1 tsp crushed red chillies","1 red pepper","1/2 tub cream or crème fraîche","1 tbsp tomato paste","Saffron"],m:["Cook the chicken with the masala, salt, lemon juice, vinegar, garlic and spices.","Blend the red pepper with the cream, tomato paste and saffron.","Add to the chicken and simmer."]},
+{n:"Cannelloni",c:"Pasta & Bakes",t:["bake","special occasion"],p:"p44",i:["Cannelloni tubes","Sauce: 1 finely chopped onion","1 green chilli","1 tsp garlic paste","5 tbsp grinded tomatoes","5 tbsp tomato puree","1 tsp chilli powder","A little fresh cream","Salt and pepper","Filling: 2 tbsp ghee","4 chicken fillets","1 tsp garlic paste","1/2 cup sweetcorn","1 green chilli","1/2 tsp dried parsley + origanum","3 tbsp mayonnaise","3 tbsp sour cream","1 tsp smoked paprika","Cheese"],m:["For the sauce: braise the onion until pink; add the chilli, garlic and tomato; add the spices and cook; lastly add the cream.","Cook the chicken in ghee with garlic, chilli and spices; shred and mix with the sweetcorn, mayo and sour cream.","Fill the tubes, cover with sauce, foil the tray and bake 30 minutes.","Sprinkle cheese, remove the foil and brown."]},
+{n:"Manuras Soup",c:"Soups",t:["winter","creamy"],p:"p46",i:["3 chicken fillets","1 1/2 tsp aromat","1 tsp green chillies","1 tsp garlic","1/4 tsp arad (turmeric)","1/2 tsp fine dhana","1 tsp fine jeeru","1/2 tsp white pepper","Ghee","1/2 tin sweetcorn","1 packet white onion soup","1 packet cream of chicken soup","1 packet mushroom soup","2 big spoons milk powder","1.7 litres water"],m:["Cook the chicken with the spices in ghee.","Add the sweetcorn.","Blitz the soup packets and milk powder with the water; add.","Simmer until thickened."]},
+{n:"Butternut & Chicken Soup",c:"Soups",t:["winter"],p:"p48",i:["2 cups butternut","1 1/2 cups water","1/2 tsp green chillies","1/2 tsp garlic","1/2 tsp cumin seeds","1 cup cubed chicken","1/4 tsp ground black pepper","2 tsp aromat","1/2 tsp jeeru","1 tsp salt","1/2 cup pasta","2 medium carrots, grated","1 litre boiling water","125 ml cream","1 fresh cream, to finish","Dhania"],m:["Boil the butternut in 1 cup water; puree with 1/2 cup water.","Braise the chillies, garlic and cumin seeds; add the chicken.","Add the pepper, aromat, jeeru and salt.","Add the pasta, carrots and butternut puree with the boiling water; simmer until the pasta is done.","Add the cream, blitz lightly, and finish with dhania."]},
+{n:"Simply Asia Noodles (Fehmz)",c:"Pasta & Bakes",t:["noodles","stir fry","takeaway at home"],p:"p49",i:["2 packets 2-minute noodles","4–5 chicken fillets, sliced or cubed","1 onion, in chunks","1/2 each green, yellow and red peppers, sliced","Sliced spring onion","Cashews","1–2 spoons roasted chilli paste","2 tbsp garlic chilli paste","1/2 tsp red chilli","3–4 tbsp Pad Thai sauce","2 tbsp light soy sauce","Oil"],m:["Heat oil in a wok; fry the garlic chilli paste and dried chillies.","Add the chicken and onion; stir-fry until cooked.","Add the peppers.","Add the roasted chilli paste, Pad Thai sauce and soy sauce.","Stir in the cooked noodles; taste.","Finish with cashews and spring onions."]},
+{n:"Pad Thai Sauce & Roasted Chilli Paste",c:"Sauces & Chutneys",t:["asian","pantry"],p:"p50",i:["Pad Thai sauce: 2 tbsp fish sauce","2 tbsp brown sugar","2 tbsp vinegar (or tamarind water)","1 tsp soy sauce","Chilli paste: 1/2 cup packed dry chillies, dry roasted","1/4 cup spring onions","5 cloves garlic","1 1/2 tbsp sugar","1 tbsp tamarind paste","1/2 tbsp soy sauce","Dash of oyster sauce or salt","1/4 cup oil"],m:["Pad Thai sauce: stir the fish sauce, brown sugar, vinegar and soy together until dissolved.","Chilli paste: dry-roast the chillies; fry the spring onions and garlic in a little oil.","Grind everything with the oil.","Cook 3 minutes; season with the salt, sugar, soy and tamarind."]},
+{n:"Chicken Tikka Masala",c:"Chicken",t:["curry","creamy","special occasion"],p:"p55",i:["Chicken cubes","1 tbsp chilli powder","1 tbsp dhana","1/2 tsp arad (turmeric)","1/2 tsp garam masala","1 tsp ginger garlic","Salt","Butter","Sauce: 2 tbsp butter","4 tsp fried onion","3–4 chopped tomatoes","4–5 elaichi (cardamom)","2 cinnamon sticks","3 green chillies","8–10 cashews","Piece of ginger","Garlic","1 tsp chilli","Milk (if too thick)","1 tsp tomato sauce","Methi","2 tsp cream + dhania to finish"],m:["Marinate the chicken cubes in the spices; cook in a non-stick pot with butter.","For the sauce: cook the butter, fried onion, tomatoes, whole spices, chillies, cashews, ginger and garlic on low for 10 minutes; liquidise.","Heat the sauce in the pan with 1 tbsp butter; add milk if too thick.","Add the tomato sauce, cooked chicken and methi.","Top with cream and dhania."]},
+{n:"Tandoori Chicken Kebab",c:"Chicken",t:["kebabs","braai"],p:"p57",i:["Chicken mince","1 grated onion, water squeezed out","1 tbsp ginger garlic","Salt","Red chilli powder","2 tbsp tandoori masala","1 tsp paprika","Green chilli","Chopped dhania","1 tsp coarsely ground dhania seeds","1 tsp lemon juice","Pinch of turmeric","1 tsp garam masala"],m:["Mix everything together well.","Shape onto skewers and grill until cooked through."]},
+{n:"Sadiya's Kebabs",c:"Chicken",t:["kebabs"],p:"p58",i:["Chicken mince","Green chilli","Garlic","Red onion","Spring onion","Dhania","Rough red chillies","Dhana jeeru","Salt","Black pepper","1 slice bread"],m:["Combine everything, shape and cook until browned."]},
+{n:"Chicken Mince Curry",c:"Chicken",t:["curry","weeknight"],p:"p59",i:["1/2 kg chicken mince","1 onion","Ghee + oil","1 1/2 tsp ginger garlic","1 1/2 tsp dhana","1 tsp jeeru","1 tsp red chilli","1/2 tsp arad (turmeric)","2 tsp salt","1 carrot","1 potato","1/2 brinjal","1 gem squash","Green pepper","3/4 cup tomato, liquidised"],m:["Braise the onion in oil and ghee until light gold.","Cook the mince until dry.","Add the masalas and cook until coated.","Add the veggies and tomato; cook until soft."]},
+{n:"Limrie Chicken",c:"Chicken",t:["curry","creamy"],p:"p60",i:["Chicken cubes","1 tsp ginger garlic","1/2 tsp black pepper","1/2 tsp white pepper","1 tsp tikka masala","1 tsp green chillies","1 tbsp lemon juice","1 tsp salt","Pinch of arad (turmeric)","1 tbsp mayonnaise","Sauce (liquidise): handful curry leaves","Handful dhania","1/4 tsp whole jeeru","1 tsp garlic","3 tbsp mayonnaise","1 tbsp vinegar","1 onion","Ghee","Cream or yoghurt"],m:["Marinate the chicken in the spices and mayo.","Liquidise the sauce ingredients, add to the chicken and marinate again.","Fry the onion in ghee; add the chicken and cook on high 15 minutes.","Add cream or yoghurt when done."]},
+{n:"Fego Strips",c:"Chicken",t:["fried","sticky","takeaway at home"],p:"p62",i:["Chicken strips","1 egg","1 tsp ginger garlic","1 cup milk","Coating: 1 cup flour","1/2 cup maizena","2 tbsp Mexican spice","Sauce: 1/2 cup sweet chilli sauce","3 tbsp tomato sauce","3 tbsp chilli sauce","3 tbsp lemon juice","2 tbsp soy sauce","2 tbsp golden syrup","1 tbsp chilli powder","100 g butter","Red food colour","Sesame seeds"],m:["Soak the chicken in the egg, ginger garlic and milk for 1 hour.","Toss in the flour, maizena and Mexican spice; deep fry.","Boil the sauce ingredients together.","Pour over, sprinkle sesame seeds and bake 20 minutes."]},
+{n:"Garlic Butter Skewers",c:"Meat & Mince",t:["braai","kebabs"],p:"p63",i:["Meat for skewers","Marinade: 1 tsp garlic + ginger","1 tsp red chilli paste","1 tbsp vinegar","1 tsp paprika","1 tsp black pepper","1 tbsp BBQ spice","3 tbsp peri sauce","1 tbsp mayonnaise","Oil","Baste: 4 tbsp butter","1 tsp garlic","3 tbsp peri sauce","1 tsp tomato paste","2 tsp parsley","1/2 tsp BBQ spice","Salt"],m:["Marinate the meat in the marinade ingredients.","Thread onto skewers and cook.","Heat the baste ingredients together and brush over as they cook."]},
+{n:"Veg Chowmein",c:"Veg & Sides",t:["noodles","quick"],p:"p64",i:["Garlic","Grated ginger","1 tsp zeal (Chinese salt)","1 tsp white pepper","2 tbsp soy sauce","4 tsp sweet & sour sauce","Cooked vegetables or frozen stir-fry mix","Noodles"],m:["Mix the garlic, ginger, zeal, white pepper, soy and sweet & sour sauce.","Toss the cooked veg and noodles through the sauce."]},
+{n:"Femz Lemon Chicken",c:"Chicken",t:["marinade","grilled"],p:"p65",i:["Chicken","2 tbsp peri masala","1 cup yoghurt","1 clove garlic","1/2 cup dhania","1/2 cup fried onion","Salt and pepper","1/4 tsp arad (turmeric)","1/4 tsp cumin","1 tsp tomato paste","Juice and zest of one lemon","1/2 tsp lemon pepper","1/2 tsp chilli powder"],m:["Blend everything into a marinade.","Marinate the chicken, then cook until done."]},
+{n:"Chicken Pasta",c:"Pasta & Bakes",t:["creamy","weeknight"],p:"p66",i:["Chicken cubes","1 tsp ginger garlic","1 tsp lemon pepper","1 tsp red chillies","1 tsp salt","3–4 tbsp lemon juice","2 tbsp tomato paste","2 tbsp mayonnaise","Peppers, corn and mushrooms","Pasta, cooked","Cream","Cheese (optional)"],m:["Marinate the chicken cubes in the spices, lemon juice, tomato paste and mayo.","Cook with the peppers, corn and mushrooms.","Add the pasta and cream; top with cheese if you like."]},
+{n:"Crumbed Brinjals (Zaza)",c:"Veg & Sides",t:["fried","starter"],p:"p67",i:["Brinjals, thinly sliced","Salt water for soaking","Eggs","Salt","Fine red chilli powder","Kellogg's crumbs"],m:["Soak the brinjal slices in salt water.","Whisk the eggs with salt and chilli powder.","Dip the brinjals in egg, then the crumbs.","Shallow fry until crispy."]},
+{n:"Savoury Rice",c:"Rice & One-Pot",t:["side"],p:"p68",i:["1 cup rice","1 tsp salt","1/4 tsp arad (turmeric)","Mixed vegetables","1/2 cup water","1 tbsp ghee","1 tsp salt (for steaming)"],m:["Rinse the rice with hot water; boil in hot water with the salt and arad for 7 minutes on medium-high.","Strain and rinse in cold water.","Add the veg, water, ghee and salt; steam on low."]},
+{n:"Cheesy Sweetcorn Pap",c:"Veg & Sides",t:["side","braai"],p:"p69",i:["2 cups water","1 tin creamstyle sweetcorn","A blob of butter","1 cup pap (maize meal)","A few handfuls of cheese"],m:["Boil the water with the sweetcorn and butter.","Once boiling, add the pap and cook 20–30 minutes.","Stir in the cheese when done."]},
+{n:"Zarda (Sweet Rice)",c:"Cakes & Desserts",t:["traditional","Eid"],p:"p70",i:["1 1/2 cups Tastic rice","Arad (turmeric) for boiling","Butter","Cinnamon sticks","1 tin pineapples","1 cup sugar"],m:["Boil the rice with arad.","Melt the butter with the cinnamon sticks; add the pineapple and sugar and boil until a syrup forms.","Mix with the rice and steam."]},
+{n:"Roasted Sweet Potato",c:"Veg & Sides",t:["side","roast"],p:"p71",i:["Sweet potatoes, in chunks","1/4 cup chilli sauce","Olive oil","Garlic","Jeeru","Salt and pepper","Parsley","Feta"],m:["Marinate the sweet potato chunks in the chilli sauce, oil, garlic, jeeru, salt, pepper and parsley.","Roast in the oven until soft.","Crumble feta over to serve."]},
+{n:"Baked Potato",c:"Veg & Sides",t:["side"],p:"p73",i:["Potatoes","Olive oil","Spices of your choice"],m:["Preheat the oven. Scrub the potatoes and season with olive oil and spices.","Prick with a fork and bake on a foil-lined tray for one hour.","Tip: microwave first to reduce the oven time."]},
+{n:"Poori",c:"Breads & Doughs",t:["fried","traditional"],p:"p74",i:["3 cups flour","1 1/2 tsp baking powder","2 tsp ghee","Salt","Milk + water, warmed (more milk gives a softer result)"],m:["Mix the flour, baking powder, ghee and salt.","Warm the milk and water and add until the dough is soft.","Roll and deep fry."]},
+{n:"Mum's Roast Veg",c:"Veg & Sides",t:["side","roast"],p:"p75",i:["Butternut","Squash","Sweet potato","Corn","Sauce: 50 g butter","Brown sugar","2–3 tbsp mayonnaise","Pinch of crushed garlic","Dagga spice","Pepper"],m:["Steam all the veggies.","Cook the sauce ingredients together.","Coat the veg and roast at 180°C."]},
+{n:"Jimmy's Garlic Rolls",c:"Savouries & Snacks",t:["side","cheesy"],p:"p76",i:["Rolls","250 ml fresh cream","2 tsp chopped garlic","3 tbsp garlic butter","1/4 tsp salt","1/2 tsp pepper","1/2 tsp green chillies","1/4 tsp parsley","Paprika","Mixed herbs","Mozzarella"],m:["Boil the cream, garlic, garlic butter and seasonings until thick.","Spread over the rolls and grill until crispy.","Top with mozzarella and grill again."]},
+{n:"Butternut & Creamed Spinach",c:"Veg & Sides",t:["side","creamy"],p:"p77",i:["500 g butternut","1 tbsp rough chillies","1 tsp salt","1/2 tsp dhana jeeru","1/2 tsp lemon pepper","2 tbsp butter","Spinach: 1 onion, chopped","500 g chopped spinach","1 tsp white pepper","1 tbsp garlic","1/2 tsp salt","1/2 cup fresh cream","Feta"],m:["Steam the butternut; add the chillies, spices and butter.","Sauté the onion, add the garlic and spinach; wilt with a little water.","Add the spices and fresh cream; reduce until thick.","Crumble feta over."]},
+{n:"Adega Steaks",c:"Meat & Mince",t:["saucy","takeaway at home"],p:"p78",i:["Steaks","1/2 tbsp chilli garlic masala","1/2 tbsp steak & chop spice","1/4 tsp lemon pepper","Salt (cube Kalahari salt)","Butter","Sauce: 70 g butter","1 tbsp garlic","1 tbsp green chilli","2 tbsp bushveld sauce","2 tbsp mayonnaise","1/2 cup cream","Salt","Chives to garnish"],m:["Rub the steaks with the spices and cook in butter.","Melt the sauce butter; add the crushed garlic and chilli.","Add the mayo, spices and cream; season.","Pour over the steaks and simmer 15 minutes. Garnish with chives."]},
+{n:"Mum's Veg Curry",c:"Veg & Sides",t:["curry","traditional"],p:"p79",i:["Ghee + sesame oil","Jeeru, mustard seeds and curry leaves (vagaar)","Garlic","1/2–1 onion, cut up","Potato","Salt, dhana, jeeru, dhana jeeru, arad (turmeric)","Frozen mixed veg or carrots or any veg","Brinjal","Pepper","Tomato","Yoghurt"],m:["Make the vagaar in ghee and sesame oil with jeeru, mustard seeds and curry leaves; add the garlic.","Add the onion and potato, then the masalas; cook for a bit.","Add the mixed veg. When halfway cooked, add the brinjal, pepper and tomato.","When done, stir in the yoghurt."]},
+{n:"Thai Green Chicken Curry",c:"Chicken",t:["curry","asian","coconut"],p:"p80",s:"Serves 2–4 · 15 min",i:["200 g boneless chicken","1 tsp sugar","1 tbsp vegetable oil","4 tbsp green curry paste","400 ml coconut milk","1 tbsp fish sauce","100 g bamboo shoots or eggplant, sliced","Jasmine rice, to serve"],m:["Heat the oil in a wok; stir the green curry paste for 2 minutes.","Add the chicken and stir 2 minutes; add the coconut milk and bring to a boil.","Reduce the heat, add the sugar, fish sauce and bamboo shoots/eggplant; simmer 5 minutes.","Cook 15–20 minutes until done. Serve hot with jasmine rice."]},
+{n:"Kurry Kitchdi",c:"Rice & One-Pot",t:["traditional","comfort"],p:"p81",i:["Stamped dhania","1/2 tomato, chopped","1 tsp green masala","1/2 cup fresh cream","1/2 cup sour milk","3 tbsp dhana flour mixed to a paste with water","1/4 tsp arad (turmeric)","1/2 tsp dhana","1/2 tsp jeeru","1 tsp salt","Vagaar: 1 tbsp oil, curry leaves, mustard seeds, jeeru, dry red chillies","Rice: 1/2 cup oil dhal","2 1/2 cups rice"],m:["Mix the kurry ingredients together in a jug.","Make the vagaar in a pot: oil, curry leaves, mustard seeds, jeeru and dried chillies.","Add the kurry mix and cook gently.","Boil the oil dhal and the rice; serve the kurry over the kitchdi rice."]},
+{n:"Crumbed Chicken",c:"Chicken",t:["fried","kids"],p:"p82",i:["Chicken","1 tsp green masala","1 tsp salt","1 tsp pepper","1/2 tsp peppersteak spice","1 tsp garlic & herb spice","1 tsp aromat","Lemon juice","Coating: egg, breadcrumbs, Hinds Southern Fried (hot)"],m:["Marinate the chicken in the spices and lemon juice.","Dip in egg, then the crumb coating.","Fry until golden and cooked through."]},
+{n:"Spicy Chicken Curry (Knorr)",c:"Chicken",t:["curry"],p:"p83",s:"Serves 4 · prep 20 min · cook 45 min",i:["15 ml cooking oil","500 g chicken pieces","1 onion, chopped","15 ml Rajah Mild & Spicy curry powder","2 tomatoes, chopped","400 ml water","150 g carrots, peeled and sliced","2 potatoes, peeled and cubed","1 Knorr chicken stock pot","Basmati rice, to serve"],m:["Heat the oil in a large pot and fry the chicken until well browned; remove and set aside.","Fry the onion until soft; add the Rajah powder and tomatoes and fry 1 minute.","Return the chicken with the water, carrots, potatoes and stock pot; bring to a boil, stirring.","Simmer uncovered 25 minutes, stirring occasionally.","Serve with basmati rice."]},
+{n:"Mama's Eid Chicken (Almond Saffron)",c:"Chicken",t:["Eid","special occasion"],p:"p85",i:["Chicken","2 tbsp tomato puree","1 tbsp melted ghee","1 tsp ginger garlic","1 1/2 tsp chilli powder","1/2 tsp salt","1/4 tsp arad (turmeric)","1/2 tsp dhana jeeru","2 tbsp ground almonds","1 handful fried onions","3 pinches saffron in boiling water","Ghee for cooking"],m:["Braise the puree, ghee, ginger garlic, spices and ground almonds in a pan.","When cool, marinate the chicken in it and add the fried onions.","Add the saffron water.","Heat ghee in a pan and cook on the stove or in the oven until browned."]},
+{n:"Red Steak",c:"Meat & Mince",t:["curry"],p:"p87",i:["1 kg steak","Ginger garlic","3 tsp Chohans masala","1/4 tsp arad (turmeric)","1/2 tsp dhana jeeru","1 level tsp salt","1 tbsp achaar masala","1 onion, chopped","Tomato paste or puree"],m:["Mix the steak with the spices and chopped onion.","Allow to cook, then add the tomato paste or puree and finish."]},
+{n:"Gajaar Pilau (Carrot Pilau)",c:"Rice & One-Pot",t:["traditional","special occasion"],p:"p88",i:["Chicken","1 onion","Ginger garlic","Dhana jeeru","Arad (turmeric)","Chillies","Salt","2 tomatoes","Fried potatoes","4–5 carrots, grated and braised in ghee","Boiled rice","Saffron strands + saffron essence and colour","Ghee","Fried onions"],m:["Fry the onion, add the chicken and ginger garlic.","Once cooked, add the dhana jeeru, arad, chillies and salt; add the tomatoes.","Add the fried potatoes; layer the braised carrots on top.","Layer the boiled rice over, add saffron and steam (colour half the rice with saffron water for the top).","Finish with ghee and fried onions on top."]},
+{n:"Custard Sojee",c:"Cakes & Desserts",t:["traditional","sweet"],p:"p89",i:["2 tbsp ghee or a generous piece of butter","2 pods elaichi (cardamom)","2 cinnamon sticks","1 cup Taystee Wheat","Dash of egg-yellow colour","1 1/2 cups milk","1/2 cup water","1/2 cup sugar","1/2 cup milk + 1 tbsp custard powder"],m:["Braise the elaichi and cinnamon in the ghee.","Add the Taystee Wheat and braise until pink; add a dash of colour.","Add the milk and water on very low heat.","Add the sugar and simmer 1 minute.","Stir in the milk-custard mixture and leave to simmer."]},
+{n:"Plain Dhall",c:"Veg & Sides",t:["curry","traditional"],p:"p91",i:["3/4 cup oil dhal","1/2 onion (keep a piece for the vagaar)","1 medium tomato","Red chilli masala","Vagaar: ghee, onion, jeeru, mustard seeds, whole chilli, curry leaves, garlic"],m:["Mix the dhal, onion and tomato with the masala (use red chilli, not Chohans).","Boil until soft, then liquidise.","Make the vagaar and pour over the dhall."]},
+{n:"Mince Pilau",c:"Rice & One-Pot",t:["traditional","family favourite"],p:"p92",i:["1 kg mince","2 cups rice + 3 tsp salt","2–4 potatoes, fried","1 onion","Ghee","1 tbsp achaar masala","1 1/2 tsp ginger garlic","4 tsp Chohans or red masala","2 tsp dhana jeeru","1 1/4 tsp salt","1 1/2 tsp garam masala","2 grated tomatoes","Fried onions","Mixed veg","1/2 cup sour milk + orange colour","Saffron + 2 tbsp ghee (for the rice water)"],m:["Boil the rice with the salt. Fry the potatoes. Braise the onion.","Cook the mince in ghee with the achaar masala, ginger garlic, masala, dhana jeeru, salt and garam masala.","Add the grated tomatoes once dry.","Add the fried onions, mixed veg, sour milk with colour, and the potatoes.","Assemble with the rice; mix saffron with a cup of rice water and the ghee, pour over, then steam 30 minutes at 180°C."]},
+{n:"Moong Dhal",c:"Veg & Sides",t:["curry","traditional"],p:"p93",i:["2 1/2 cups moong dhal","1 tsp bicarb (for the first boil)","1 big onion","Garlic","Green chillies","Curry leaves","2 big tomatoes, liquidised","Masalas","1 1/2 tsp salt","1 tbsp aamli (tamarind)","1/2 cup yoghurt or sour milk","1/4 cup water + colour"],m:["Boil the dhal in a large deep pot with the bicarb for 10 minutes; rinse and boil again in clean water for 10 minutes — soft but whole. Set aside with a little of the water.","Fry the onion, garlic, green chillies and curry leaves.","Add the masalas and liquidised tomato; cook until dry.","Add the aamli and yoghurt; cook 5 minutes.","Combine the moong with the chutney; add the water and colour."]},
+{n:"Akni",c:"Rice & One-Pot",t:["traditional","one-pot"],p:"p95",i:["1/2 kg steak","1 onion (vagaar with clove, cinnamon, elaichi)","Ginger garlic","Salt","Arad (turmeric)","Red masala","Jeeru","Dhana","1 1/2 cups rice, boiled","1 potato, fried","1 tomato","Peas","1/2 cup sour milk","Dhania","1 big glass water + 1/4 tsp colour"],m:["Make the vagaar with the whole spices; add the meat and ginger garlic, then the salt, arad, red masala, jeeru and dhana.","Cook the meat halfway; when the water dries out, add the tomato.","After the tomato has cooked, add the peas and potatoes with the sour milk.","Add the rice and dhania; pour in the coloured water until the rice is covered.","Boil on high, then lower to steam."]},
+{n:"“Healthy” Rice Dish",c:"Rice & One-Pot",t:["layered","bake"],p:"p96",i:["Chicken cubes","1 tbsp red chilli paste","1 tsp red chilli powder","1/2 tsp arad (turmeric)","2 tsp garlic and ginger","2 tbsp aromat","1 tbsp lemon juice","1 pureed tomato","Salt","Braise: 1 grated onion","1/2 tomato puree","1/2 tsp red chilli powder","1/2 tsp arad","1 tsp aromat","1/2 cup peas","Corn","1/4 cup peppers","1 cup boiled rice","Cheese","1 cup water"],m:["Marinate the chicken cubes in the pastes, spices, lemon juice and tomato.","Braise the onion with the puree and spices; add the peas, corn and peppers.","Mix a quarter of the rice with the veg.","Layer the meat, cheese and water; cover with the rest of the rice mixed with the veg.","Steam on low."]},
+{n:"Moong Dhal (Ma's method)",c:"Veg & Sides",t:["curry","traditional"],p:"p97",i:["2 1/2 cups moong dhal","1 tsp bicarb","1 big onion","Garlic, green chillies, curry leaves","2 big tomatoes, liquidised","Masalas","1 1/2 tsp salt","1 tbsp aamli (tamarind)","1/2 cup yoghurt (or sour milk)","1/4 cup water + colour"],m:["Boil the dhal with bicarb 10 minutes in a large deep pot; rinse, boil again 10 minutes in clean water — soft but whole.","Fry the onion, garlic, chillies and curry leaves; liquidise the tomatoes and add with the masalas and salt; cook until dry.","Add the aamli and yoghurt; cook 5 minutes.","Combine the moong and chutney; add the water and colour."]},
+{n:"Ma's Paans Puri",c:"Savouries & Snacks",t:["street food","traditional"],p:"p98",i:["2 potatoes, boiled in their jackets","2 tsp aamli (tamarind) paste","1 1/2 cups boiling water","Red chilli","Salt","Coarse jeeru","1 tbsp brown sugar (or to taste)","Vagaar: little oil, mustard seeds, curry leaves","Dhania"],m:["Boil the potatoes in their jackets; peel and cube.","Mix the aamli paste with the boiling water, chilli, salt, jeeru and sugar.","Make the vagaar and add.","Combine everything with the dhania."]},
+{n:"Khowse",c:"Chicken",t:["coconut","Burmese","special occasion"],p:"p99",s:"From Naqiyah Mayet",i:["1 tin coconut milk","1 tin coconut cream","Handful desiccated coconut","Ghee or butter","1–2 whole spices","1/2 onion, finely chopped","Ginger garlic","1/2–1 kg cubed chicken","Salt","Red ginger garlic masala","Lemon juice","Dhana jeeru","Arad (turmeric) + egg-yellow colour","Dhania","To serve: pasta, fried puri with salt and chilli, lemon wedges, jalapeños"],m:["Simmer the coconut milk, cream and desiccated coconut on low heat.","Cook the onion in ghee with the whole spices; add the chicken, ginger garlic and spices.","Cook until the water reduces and the chicken is coated.","Add the coconut mix; remove the chicken and whole spices; blitz the sauce.","Return the chicken and let it soften; add dhania.","Serve over pasta with fried puri, lemon wedges and jalapeños."]},
+{n:"Ma's Puri",c:"Breads & Doughs",t:["fried","traditional"],p:"p100",i:["2 cups flour","1 tsp salt","1 1/4 tsp baking powder","1 tbsp ghee or butter","1/4 cup hot water","1/2 cup milk","1 egg, beaten"],m:["Mix the dry ingredients with the ghee.","Add the hot water, milk and beaten egg; mix together into a dough.","Roll and fry."]},
+{n:"Five Chicken Marinades",c:"Sauces & Chutneys",t:["marinade","braai"],p:"p1",i:["Sweetcorn: 1 tsp chilli powder, 1 tsp salt, 2 tbsp lemon, 1/2 cup yoghurt, 1/2 tsp garlic, 1/2 tsp dhana jeeru, 1 tbsp ghee","Tawa: 1 cup yoghurt, 2 tsp jeeru, 1 tsp ginger garlic, 1 tsp green chilli, 1 tsp black pepper, 1 tsp tandoori masala","Green: 1/2 cup yoghurt, 1 tbsp garlic, salt, green chilli, dhania, curry leaves, 1 tsp jeeru","Med: 1/2 tsp jeeru, 4 tbsp mayo, 3 tbsp creamy peri, 1/2 tsp lemon pepper, 1/2 tsp chilli, 1 1/2 tbsp tomato puree, 1 tsp salt, 1/2 tsp haldi, 1 tsp ginger garlic, 1 tsp lemon, 2 tbsp olive oil","Red pepper: 1/2 tsp red masala, 1 tsp salt, 2 tbsp lemon, 2 tbsp vinegar, garlic, 1 tsp chicken spice, 1 tsp lemon pepper, 1/2 tsp jeeru, 2 tsp chilli"],m:["Mix the marinade of your choice and coat the chicken.","Marinate at least an hour before grilling or braaiing."]},
+{n:"Ramadhaan Chutney",c:"Sauces & Chutneys",t:["Ramadaan","pantry"],p:"p101",i:["1 bottle All Gold tomato sauce","1 bottle sweet chilli sauce","1 bottle chilli garlic sauce","1 bottle chilli sauce","1 bottle Mrs Balls chutney","Vagaar: oil, mustard seeds, curry leaves, garlic, achaar masala, jeeru (optional)"],m:["Combine all the bottled sauces.","Make the vagaar and stir through.","Bottle and keep for the month."]},
+{n:"Corn Fritters",c:"Savouries & Snacks",t:["fried","tea time"],p:"p102",i:["1 tin creamstyle sweetcorn","2 eggs","4 tbsp flour","1 tbsp melted ghee","1 tsp ground dry dhana","1/2 tsp crushed jeeru","1/4 tsp arad (turmeric)","Salt to taste","Chopped green dhania","Chopped spring onions","Chopped green chillies"],m:["Mix everything into a batter.","Fry spoonfuls until golden on both sides."]},
+{n:"Naan Bread",c:"Breads & Doughs",t:["bake","bread"],p:"p103",i:["4 cups bread flour","7 g instant yeast","1/2 tsp sugar","1/4 cup powdered milk","62.5 g melted butter","125 ml sour milk or plain yoghurt","3/4 cup lukewarm water","1 1/2 eggs","Pinch of salt","2 tbsp somph (fennel)","1/4 cup milk for brushing","Poppy seeds"],m:["Sift the flour, salt and sugar; add the powdered milk and fennel.","In another bowl mix the melted butter, egg, sour milk and water.","Make a well in the flour, add the yeast, and pour in the liquid until a soft dough forms.","Knead 20 minutes. Cover and proof 45 minutes. Knock down, shape, and proof 30 minutes more.","Bake at 180°C covered with foil. After 20 minutes brush with milk and sprinkle poppy seeds.","Bake a further 15–20 minutes, brushing again with milk for a flaky finish."]},
+{n:"Pizza Dough",c:"Breads & Doughs",t:["bake","kids"],p:"p104",i:["5 cups flour, divided","2 cups warm water","1 tbsp yeast","1 tsp salt","4 tsp olive oil"],m:["Mix the water and yeast and leave to activate.","Mix 2 1/2 cups of the flour with the yeast mixture in the machine.","Add the remaining flour and the salt; knead, then rest 15–20 minutes.","Oil the baking tray and bake at 200°C."]},
+{n:"Lagan (Savoury Bake)",c:"Savouries & Snacks",t:["bake","tea time"],p:"p105",i:["1 cup flour","62.5 g butter","1/2 cup milk","1 1/2 tsp baking powder","1/2 tsp salt","1/2 tsp pepper","1 egg","Cooked peppers and steak for the filling"],m:["Sift the dry ingredients and rub the butter in.","Beat the egg and milk; combine into a batter.","Pour half into the dish, add the peppers and steak, and cover with the rest of the batter.","Bake until set and golden."]},
+{n:"Greek Pasta Salad (like Woolies)",c:"Salads",t:["salad","summer"],p:"p106",i:["250 g pasta screws, boiled in well-salted water","1/2 cucumber, sliced and quartered","250 g mini Rosa tomatoes, quartered","200 g feta, in blocks","Olives, cut into pieces","1/2 small onion, halved and thinly sliced","Dressing: 1 cup Greek yoghurt","2 tbsp honey","2 tbsp olive oil","1/2 tbsp lemon juice","1 tbsp wholegrain mustard","1 tsp salt","1 clove garlic, crushed","1/2 tsp black pepper","1 tsp oregano (dry or fresh)"],m:["Boil the pasta and cool.","Toss with the cucumber, tomatoes, feta, olives and onion.","Whisk the dressing ingredients and fold through."]},
+{n:"Spring Roll Steak & Cheese Filling",c:"Savouries & Snacks",t:["Ramadaan","bulk","savouries"],p:"p107",s:"Makes 12 1/2 dozen",i:["3 kg cubed steak","3 tbsp ginger garlic, slightly heaped","2 tsp green masala","3 tsp Gorimas spice","3 tsp white pepper and salt, level","3 tbsp orange spice","3 tsp tenderiser","3 onions","Oil","1 cup chopped peppadews","Spring onions","4 cups thick white sauce","± 1 1/2 cups mozzarella + gouda"],m:["Cook the steak with the spices, onions and oil until soft.","Once cooked, add the peppadews, spring onions, white sauce and cheese.","Cool before filling and rolling."]},
+{n:"Spring Roll Chicken Filling",c:"Savouries & Snacks",t:["Ramadaan","bulk","savouries"],p:"p108",s:"Makes 15 dozen",i:["3 kg cubed chicken","2 tsp green masala","3 tsp ginger garlic","4 tsp Gorimas spice","3 tsp salt","2 tsp white pepper","3 tsp mustard powder","2 tsp ground jeeru","3 onions","Mustard sauce","Tomato sauce","Sweet chilli or Steers peri-peri","Dhania","Spring onions"],m:["Cook the chicken with the spices and onions.","Once cooked, add the sauces, dhania and spring onions.","Cool before rolling."]},
+{n:"Samoosa Potato Filling",c:"Savouries & Snacks",t:["Ramadaan","bulk","savouries"],p:"p109",s:"Makes 12 dozen",i:["14 potatoes","Vagaar: jeeru, rye (mustard seeds), curry leaves","3 tsp green masala","3 tsp salt","1 tsp dhana","1 tsp jeeru","1/2 tsp arad (turmeric)","Juice of 1 lemon","Dhania","Spring onions"],m:["Make the vagaar; add the potatoes.","Add the masala and spices; cook until soft.","Add the lemon juice, dhania and spring onions."]},
+{n:"Spring Roll Steak Filling (Saucy)",c:"Savouries & Snacks",t:["Ramadaan","bulk","savouries"],p:"p110",s:"Makes 15 dozen (3 kg, 3 onions)",i:["Per 1 kg cubed steak:","1 tsp ginger garlic","1 onion","2 1/2 tsp mixed masala","1 tsp meat tenderiser","1/4 tsp arad (turmeric)","1 tsp salt","1/2 tsp dhana","1/2 tsp jeeru","1 heaped tsp achaar masala","Tomato sauce","Mustard sauce","Sweet chilli sauce","Dhania","Spring onions"],m:["Cook the steak with the spices, adding water over time until soft. Shred.","Once cooked, add the sauces, dhania and spring onions."]},
+{n:"Arabic Dough",c:"Breads & Doughs",t:["bake","bread"],p:"p111",i:["2 cups warm water","4 tbsp sugar","2 tbsp yeast","2 cups flour (first mix)","1/4 tsp salt","2 tbsp milk powder","1/2 cup oil","3 cups flour + 1 tsp baking powder (second mix)"],m:["Mix the water, sugar, yeast, first flour, salt and milk powder; set aside 10–15 minutes.","Add the oil, remaining flour and baking powder.","Mix and knead well. Rest 30 minutes (not strictly required)."]},
+{n:"Chicken Corn Lagan",c:"Savouries & Snacks",t:["bake","tea time"],p:"p112",i:["1/2 cup oil","1 tin sweetcorn","3 eggs","1/2 cup milk","1/2 cup bhajia mix","1/2 tsp salt","Cubed pepper (optional)","2–3 green chillies, to taste","1/3 cup flour","2 tsp baking powder","Dhania","Sesame seeds"],m:["Combine the wet ingredients.","Sift in the dry ingredients; add the dhania.","Pour into a dish and sprinkle sesame seeds.","Bake at 180°C for 20–30 minutes."]},
+{n:"Chicken Pancakes (Savoury Crumpets)",c:"Savouries & Snacks",t:["tea time"],p:"p113",i:["2 eggs","1 cup flour","1 cup milk","2 tsp baking powder","2 tbsp melted butter","1/4 cup grated cheese","Chopped spring onions","Dhania","Green chillies"],m:["Mix everything into a thick batter.","Fry spoonfuls on a greased pan until golden on both sides."]},
+{n:"Rotis (Take 2!)",c:"Breads & Doughs",t:["traditional","tawa"],p:"p114",i:["2 cups flour","1/2 tsp salt","3 tbsp oil","3 tbsp ghee","2 cups boiling water","Melted ghee for brushing"],m:["Combine the flour and salt. Rub in the oil and ghee to make breadcrumbs.","Add the boiling water, mixing with a spoon, until a soft dough forms.","Knead 5 minutes; rest half an hour.","Roll out, brush with melted ghee, sprinkle flour and roll up like a swissroll; coil and roll flat.","Cook on a hot tawa: when it bubbles, turn; brush lightly with ghee and turn again until browned."]},
+{n:"Oats Rotis",c:"Breads & Doughs",t:["healthy","tawa"],p:"p115",i:["1/2 cup nutty wheat","1/4 cup ground oats","Onions","Dhania","Green chillies","Salt","1/2 tsp oil"],m:["Mix everything with a little water.","Keep aside 15–20 minutes, then roll and cook on the tawa."]},
+{n:"Soul Fire Sauce",c:"Sauces & Chutneys",t:["hot sauce","fermented"],p:"p116",i:["1/2 cup fresh red chillies, tops removed","1 cup packed whole dry chillies","Vinegar to cover + 1 cup for blending","1 tsp sugar","1/8 tsp xanthan gum per cup of liquid"],m:["Place the chillies in a jar and top with vinegar. Ferment 7–14 days.","Add the sugar and the cup of vinegar; blend until smooth.","Blend in the xanthan gum to thicken."]},
+{n:"Chicken Bhajia",c:"Savouries & Snacks",t:["fried","tea time"],p:"p117",i:["1 cup chicken fillet","2 slices bread","1 egg","1 tsp green chilli","1 tsp garlic","Dhania","Salt","1 tsp dhana jeeru","1 tsp baking powder"],m:["Blend everything together.","Fry spoonfuls until golden and cooked through."]},
+{n:"Apple & Avo Salad",c:"Salads",t:["salad","summer"],p:"p118",i:["Lettuce","Green pepper","1 onion, in rings","2 grated carrots","1 small cucumber, cut","Feta","Dressing: 3 tbsp yoghurt","4 tbsp mayonnaise","2 tbsp honey","1/2 tsp black pepper","1 tbsp vinegar","2 tbsp lemon juice","Add last: 1–2 green apples, cubed","1 avo, cubed","Vagaar: 2 tbsp sesame seeds, handful chopped nuts, oil or ghee"],m:["Layer the salad ingredients.","Whisk the dressing and toss through.","Add the apples and avo last.","Toast the sesame seeds and nuts in a little oil or ghee and scatter over."]},
+{n:"Green Chutney Mayo Sauce",c:"Sauces & Chutneys",t:["pantry"],p:"p119",i:["1 bottle Picallili","1/2 cup vinegar","5–7 green chillies","1 handful curry leaves","3 cloves garlic","1 bottle mayonnaise","1/2–3/4 cup sugar","Salt to taste","Vagaar: 2 tbsp sesame seeds, 2 tbsp mustard seeds, little oil","Green colour (a little)"],m:["Blend the Picallili, vinegar, chillies, curry leaves and garlic.","Mix with the mayo, sugar and salt.","Make the vagaar and stir through with a little green colour."]},
+{n:"Patheria Casserole",c:"Savouries & Snacks",t:["traditional"],p:"p120",i:["1 whole roll of patha","Red chutney","Fresh cream","Cheese"],m:["Fry the patha.","Layer with red chutney, fresh cream and cheese; bake until bubbling."]},
+{n:"Aamli Chillies",c:"Sauces & Chutneys",t:["side","sticky"],p:"p121",i:["Chilli rounds","Oil","Dhana","Jeeru","Coconut","Sesame seeds","Fine red chilli","Brown sugar","Aamli (tamarind) sauce"],m:["Fry the chilli rounds slowly in oil.","Add the dhana, jeeru, coconut, sesame seeds, red chilli and brown sugar.","Add the aamli sauce and let it get brown and sticky."]},
+{n:"Gori Khala's Achaar",c:"Sauces & Chutneys",t:["achaar","pantry"],p:"p122",i:["1/2 cup maizena","1 1/2 cups vinegar","1 cup sugar","To liquidise: 1 cup sugar","1 cup methi masala","1/2 cup vinegar","1 cup oil","Vagaar: curry leaves and sesame seeds"],m:["Make a paste with the maizena; add to the boiling vinegar and sugar and stir until thick. Cool.","Liquidise the second sugar, methi masala, vinegar and oil; combine with the cooled mixture and liquidise.","Finish with a vagaar of curry leaves and sesame seeds."]},
+{n:"Shortbread Biscuits",c:"Biscuits & Cookies",t:["bake","tea time"],p:"p123",i:["Best recipe: 300 g butter","1 cup maizena","3 cups flour","3/4 cup castor sugar","(Or: 250 g butter, 1 cup maizena, 1/2 cup oil, 1 cup icing sugar)","Sugar for dredging"],m:["Sieve the dry ingredients into the butter.","Knead and press into a baking tray lined with greaseproof paper.","Bake at 180°C.","Dredge with sugar when cooled."]},
+{n:"Icing & Cake Syrups",c:"Cakes & Desserts",t:["basics","icing"],p:"p124",i:["Butter icing: 60 g butter, 1 cup icing sugar, 2 tsp milk (Wooden Spoon butter works best)","Lemington syrup: 1 cup sugar, 1 cup milk, 2 tbsp cocoa","Red cake syrup: 3/4 tin (410 g) apricot jam, water, red colour"],m:["Butter icing: beat the butter, add the icing sugar and milk and beat until smooth.","Lemington syrup: warm the sugar, milk and cocoa together.","Red cake syrup: loosen the jam with water and colour."]},
+{n:"Cupcakes",c:"Cakes & Desserts",t:["bake","kids"],p:"p125",i:["1 1/2 cups castor sugar","3 cups flour","4 tsp baking powder","4 eggs","1 tsp vanilla essence","1 cup milk","250 g margarine","Chocolate topping: 1 small tin Nestlé cream + 200 g Dairy Milk"],m:["Combine all the ingredients and mix for 10 minutes on low.","Place in greased cupcake tins; bake 15–20 minutes at 180°C (a cake takes 30–40 minutes).","For a filled cake: pour 2/3 of the batter in a greased pan, add filling, top with more batter.","Topping: boil the Nestlé cream with the Dairy Milk and cool before icing."]},
+{n:"Pancakes (Fluffy)",c:"Breakfast & Treats",t:["breakfast","kids"],p:"p126",i:["1 egg","1 cup milk","1 tbsp sugar","1 tbsp melted butter","3/4 cup flour","Pinch of salt","Nutmeg","1 tsp baking powder","To serve: sugar and cinnamon, coconut or ice cream"],m:["Beat the egg, milk and sugar; add the butter.","Sift the flour, salt and nutmeg and add gradually.","Add the baking powder last.","Fry in a little oil and serve with cinnamon sugar, coconut or ice cream."]},
+{n:"Crumpets",c:"Breakfast & Treats",t:["breakfast","tea time"],p:"p127",i:["1 egg","2 tbsp sugar","1 cup flour","3/4 cup milk","1 tbsp melted ghee","3 tsp baking powder","Syrup and butter, to serve"],m:["Beat the egg and sugar until light.","Add the flour, milk and ghee.","Add the baking powder last.","Fry in ghee and serve with syrup and butter."]},
+{n:"Plain Cake",c:"Cakes & Desserts",t:["bake","classic"],p:"p128",i:["250 g butter","1 1/2 cups castor sugar","4 extra-large eggs","2 1/2 cups flour","2 1/2 tsp baking powder","Pinch of salt","1 cup milk","Vanilla essence","Nutmeg"],m:["Cream the butter and sugar; beat in the eggs and vanilla.","Add the flour and milk alternately, with the baking powder, salt and nutmeg.","Bake at 180°C for 45 minutes."]},
+{n:"Coconut Biscuits",c:"Biscuits & Cookies",t:["bake","tea time"],p:"p129",i:["250 g margarine","3/4 cup castor sugar","2 eggs","2 1/2 cups coconut","1 tbsp oil","1 tsp vanilla essence","1 1/2 tsp baking powder","1 tbsp custard powder","2 1/4 cups flour"],m:["Cream the margarine and sugar.","Add everything except the flour and baking powder.","Sift in the flour and baking powder bit by bit.","Roll out, prick with a fork, cut out.","Bake 15 minutes at 180°C."]},
+{n:"Bounty Cake (Aasiya)",c:"Cakes & Desserts",t:["bake","coconut","special occasion"],p:"p130",s:"Doubles: 250 g butter, 1 cup sugar, 6 yolks, 2 cups flour…",i:["125 g butter","1/2 cup castor sugar","3 egg yolks","1 tsp vanilla essence","1 cup flour","1 1/2 tsp baking powder","2 tbsp cocoa","3/4 cup milk","Filling: 3 egg whites, beaten stiff","1/2 cup icing sugar","1 1/4 cups coconut"],m:["Beat the butter and sugar until fluffy; beat in the yolks.","Mix the sifted dry ingredients in, alternating with the milk.","Fold the icing sugar and coconut into the stiff egg whites for the filling.","Layer and bake."]},
+{n:"Chewy Coconut Cookies",c:"Biscuits & Cookies",t:["bake","coconut"],p:"p131",s:"From mikeysinmykitchen.com",i:["1/2 cup (113.5 g) butter, softened","1/2 cup brown sugar","1/2 cup granulated sugar","1 egg","1 tsp vanilla","1 1/2 cups coconut","1 cup flour","1/2 tsp baking soda","1/2 tsp baking powder","Pinch of salt"],m:["Preheat the oven to 180°C.","Sift the flour, baking soda, baking powder and salt.","Mix the butter, sugars, egg and vanilla.","Add the flour mixture, then the coconut.","Bake 8–10 minutes at 180°C."]},
+{n:"Scones",c:"Breakfast & Treats",t:["bake","tea time"],p:"p132",s:"Makes ± 18",i:["4 cups flour","1/2 cup sugar","250 g butter, room temperature","4 1/2 tsp baking powder","2 eggs","3/4 cup sour milk","Vanilla essence","Egg or milk for brushing"],m:["Rub the butter into the flour, sugar and baking powder to breadcrumbs.","Beat the eggs, sour milk and vanilla; combine into a dough.","Roll 2 cm thick and cut.","Brush with egg or milk; bake at 180°C for ± 15 minutes."]},
+{n:"Custard Biscuits",c:"Biscuits & Cookies",t:["bake","tea time"],p:"p133",i:["250 g butter","1 1/4 cups icing sugar","1/4 cup oil","2 egg yolks","2 tsp baking powder","3 tbsp custard powder, level","3/4 cup maizena","± 2 1/2 cups flour, to make a soft dough","Jam"],m:["Cream the butter and icing sugar with the oil and yolks.","Add the baking powder, custard powder, maizena and enough flour for a soft dough.","Pipe through a nozzle and make a hole in the middle for jam.","Bake about 15 minutes."]},
+{n:"Date & Nut Squares",c:"Biscuits & Cookies",t:["bake","tea time"],p:"p134",i:["250 g butter","1 cup sugar","2 eggs","1 tsp vanilla","2 tsp baking powder","2 cups flour","Pinch of salt","1 cup coconut","1 tbsp ice water","1 packet dates, chopped and dusted with flour","Handful of nuts","Flaked almonds","Icing sugar"],m:["Cream the butter, sugar, eggs and vanilla.","Sift in the baking powder, flour and salt; add the coconut, ice water, dates and nuts.","Pat into a pan and top with flaked almonds.","Bake 25 minutes at 150°C; dust with icing sugar when cool."]},
+{n:"Impossible Pudding",c:"Cakes & Desserts",t:["bake","coconut","pudding"],p:"p135",s:"Halves easily (35 g marg, 1 cup milk…)",i:["70 g margarine, melted","2 cups milk","3/4 cup sugar","1 cup coconut","1 tsp vanilla","4 eggs","1 tbsp flour","1/2 tsp baking powder","Nutmeg"],m:["Blend everything together.","Pour into a dish and bake at 180°C for 45 minutes in a bain-marie, with nutmeg on top."]},
+{n:"Malva Pudding",c:"Cakes & Desserts",t:["pudding","South African","winter"],p:"p136",i:["220 g castor sugar","2 eggs","1 tbsp apricot jam","175 g flour","1/2 tsp bicarb","1/4 tsp salt","2 tbsp butter","1 tbsp vinegar","1/2 cup milk","Sauce: 1 cup cream, 115 g butter, 50 g brown sugar"],m:["Oven to 190°C. Beat the sugar, eggs and jam until light.","Sift the flour, bicarb and salt.","Melt the butter in a pan; mix in the vinegar and milk.","Add the dry mix to the eggs and combine; add the milk mixture.","Bake 35–40 minutes.","Heat the sauce ingredients and pour over the hot pudding."]},
+{n:"Alfajores",c:"Biscuits & Cookies",t:["bake","caramel"],p:"p137",s:"Doubles: 2 cups cornstarch, 226 g butter…",i:["1 cup cornstarch","3/4 cup flour","1 tsp baking powder","1/2 tsp baking soda","1/4 tsp salt","113 g butter","1/3 cup sugar","2 egg yolks","1/2 tsp vanilla","Caramel for sandwiching"],m:["Mix the butter and sugar until fluffy (3 minutes).","Add the yolks and vanilla until blended.","Add the cornstarch, flour, salt, baking powder and soda.","Refrigerate in plastic wrap.","Bake 12 minutes at 180°C; sandwich with caramel."]},
+{n:"Eclairs",c:"Cakes & Desserts",t:["bake","special occasion"],p:"p138",s:"Makes 2 dozen + 13 mini",i:["250 ml boiling water","125 ml butter","250 ml cake flour","3 jumbo eggs","Filling: 200 ml cream + 1 tbsp icing sugar + vanilla","Topping: chocolate and cream, melted together"],m:["Boil the water in a small pot; add the butter and let it melt.","Add the flour all at once and stir with a wooden spoon.","Remove from the heat and beat in a mixer 1 minute.","Add the eggs one by one.","Pipe and bake 25 minutes at 180°C; slit to release steam.","Whip the cream with icing sugar and vanilla until stiff; fill, then top with the chocolate-cream mix."]},
+{n:"Maizena Biscuits",c:"Biscuits & Cookies",t:["bake","tea time"],p:"p139",i:["125 g butter","1/2 cup icing sugar","1 egg yolk","1/2 tsp vanilla","1/8 tsp baking powder","1/2 cup maizena","1 1/2 cups flour","Chocolate for drizzling"],m:["Cream the butter and icing sugar; add the yolk and vanilla.","Add the baking powder, maizena and flour.","Pipe through a nozzle.","Bake at 180°C for 10–15 minutes; drizzle with chocolate."]},
+{n:"Almond Rocha",c:"Cakes & Desserts",t:["sweets","gift"],p:"p140",i:["375 g butter","1 1/2 cups sugar","1 1/2 tbsp liquid glucose","3 tbsp boiling water","1 cup almonds","100 g milk chocolate","Extra almonds or coconut to sprinkle"],m:["Melt the butter and sugar in a thick-based pot on high for 7 minutes.","Add the glucose and water; stir continuously ± 7 minutes.","When the mixture leaves the sides of the pot, add the almonds.","Stir until it darkens (± 110°C on a candy thermometer).","Spread onto a foiled, greased pan.","Break the chocolate over the top, spread as it melts, and sprinkle with almonds or coconut."]},
+{n:"Ice Cream Cake",c:"Cakes & Desserts",t:["no bake","frozen","kids"],p:"p141",i:["2 litres vanilla ice cream, softened","1 box Kit Kats, grated","200 g whole nut slab, grated","1 cup chopped pecans","1/2 packet Tennis biscuits, crushed","1 small tin Nestlé cream","Carnation caramel"],m:["Beat the Nestlé cream with the caramel until smooth.","Fold everything through the softened ice cream, layering with the crushed biscuits.","Freeze until firm."]},
+{n:"Khaliat Nahal (Honeycomb Bread)",c:"Breads & Doughs",t:["bake","bread","special occasion"],p:"p142",i:["2 1/2 cups flour","1 cup milk","2 tbsp milk powder","1/2 cup water (may not need all)","1 egg","3 tbsp sugar","4 tbsp oil","4 tbsp melted butter","1 1/2 tsp instant yeast","1/2 tsp salt","6–8 Laughing Cow cheese wedges","1 egg + tsp milk, for the wash","Syrup: 1 cup sugar, 3/4 cup water, 1 tbsp honey, pinch saffron"],m:["Boil the syrup sugar, water and saffron until slightly thick; off the heat add the honey and cool.","Sieve the flour; add the milk powder, sugar, yeast and salt.","Add the oil, butter and egg; mix. Add the milk, knead, and add water a little at a time until a soft dough forms.","Oil lightly and let rise 40 minutes. Punch down.","Break into 40 pieces, fill each with cheese, and let rise in a greased pan 30 minutes.","Egg wash and bake at 180°C for 20–25 minutes. Pour the cooled syrup over the hot bread."]},
+{n:"Hertzoggies",c:"Biscuits & Cookies",t:["bake","South African","tea time"],p:"p143",i:["4 cups flour","250 g margarine","3 eggs","1 cup sugar","2 tsp baking powder","2 tsp lemon essence","1/2 cup oil","Topping: 1 cup coconut, 1/2 sugar, 1/2 butter, hot water","Apricot jam"],m:["Mix the margarine and sugar until creamy; add the essence and eggs.","Add the dry ingredients and oil; make a soft dough and refrigerate.","Heat the coconut, sugar, butter and hot water until melted.","Fill cases with half jam, half coconut topping.","Bake at 180°C until brown."]},
+{n:"Brownie Cookies",c:"Biscuits & Cookies",t:["bake","chocolate"],p:"p144",i:["3/4 cup white sugar","1/4 cup brown sugar","2 eggs","74 g melted butter","1/3 cup cocoa","200 g dark chocolate","3/4 cup flour","3/4 tsp baking powder","1/2 tsp salt","3/4 tsp coffee","3/4 tsp vanilla","1/2 cup choc chips"],m:["Beat the sugars and eggs until no longer grainy.","Melt the butter, chocolate and coffee; off the heat stir in the cocoa.","Cool slightly, add to the egg mix and beat; add the vanilla.","Fold in the flour, baking powder, salt and choc chips.","Refrigerate no longer than 30 minutes.","Bake 10–12 minutes at 175°C."]},
+{n:"Croissant Bread & Butter Pudding",c:"Cakes & Desserts",t:["pudding","berries"],p:"p145",s:"From The Little Berry Book (Woolworths)",i:["4 croissants","Butter, for spreading","Raspberry or strawberry jam","4 extra-large eggs","1 tsp vanilla essence","2 1/2 cups milk","1 tsp lemon zest","2–3 handfuls frozen mixed berries"],m:["Preheat the oven to 180°C.","Slice the croissants in half; butter one side and spread with jam. Arrange in a greased baking dish.","Whisk the eggs, vanilla, milk and lemon zest; pour over the croissants.","Top with the berries.","Bake 30 minutes; serve warm."]},
+{n:"Coconut Biscuit Traybake",c:"Biscuits & Cookies",t:["bake","kids"],p:"p146",i:["250 g butter","3/4 cup castor sugar","1 egg","3 tsp baking powder","1 cup coconut","Flour, to make a soft dough","Sprinkles","Astros, choc chips, nuts (optional)"],m:["Cream the butter and sugar; add the egg.","Add the baking powder, coconut and enough flour for a soft dough.","Press into a tray, scrape level, and don't forget the sprinkles (or astros, choc chips, nuts).","Bake, and slice while warm."]},
+{n:"Milo Malva",c:"Cakes & Desserts",t:["pudding","chocolate","winter"],p:"p147",i:["250 ml sugar","20 ml soft butter","1 egg","275 ml flour","100 ml Milo","5 ml bicarb","250 ml milk","10 ml vinegar","10 ml vanilla","Sauce: 100 g Milo chocolate, 125 ml fresh cream, 166 ml milk, 30 ml butter, 80 ml Milo"],m:["Preheat the oven to 180°C.","Cream the butter and sugar; beat in the egg.","Add the dry ingredients, then the wet.","Bake 30–40 minutes.","Melt the sauce ingredients on low heat, adding the extra Milo once the chocolate has melted.","Pour over the hot pudding."]},
+{n:"Chocolate Oil Cake",c:"Cakes & Desserts",t:["bake","chocolate"],p:"p148",s:"This is the 1/2 recipe",i:["3 eggs","1/2 cup + 6 tbsp sugar","1/2 cup boiling water","1/2 cup oil","1/4 cup cocoa","1/2 tsp vanilla","1/2 tsp coffee granules","1 cup self-raising flour"],m:["Beat the eggs and sugar until light.","Mix the boiling water, oil, cocoa, vanilla and coffee.","Combine everything with the self-raising flour.","Bake at 180°C for 30–40 minutes."]},
+{n:"Choc Peanut Muffins",c:"Breakfast & Treats",t:["gluten-free","healthy","muffins"],p:"p149",s:"Gluten-, grain-, soy-, dairy-, oil- and refined-sugar-free",i:["1 banana","1 egg","1/2 cup peanut butter","3 tbsp honey","1 tbsp vanilla","1/4 tsp bicarb","Pinch of salt","1/4 cup choc chips"],m:["Liquidise everything except the choc chips.","Stir in the choc chips after blending.","Bake at 200°C for 8–9 minutes."]},
+{n:"Basbousa",c:"Cakes & Desserts",t:["bake","Middle Eastern","syrup"],p:"p150",i:["1 3/4 cups Tasty Wheat","1/4 cup flour","3/4 cup sugar","1 1/2 tsp baking powder","1/2 cup coconut","1/2 cup melted butter","1 cup yoghurt (or half milk, half yoghurt)","2 eggs","2 tsp vanilla","1/4 tsp salt","Almonds, for the centres","Syrup: 1 1/2 cups sugar, 1 1/4 cups water, 1 tsp lemon, 1 tsp vanilla"],m:["Make the syrup first: boil, then simmer 8 minutes; stir in the vanilla.","Mix the wet and dry ingredients together with a wooden spoon.","Pour and level into a pan; score squares or diamonds and press an almond into each centre.","Cover and rest half an hour.","Bake at 180°C for 40 minutes.","Cut through the score marks, pour the syrup over, and return to the oven 5 minutes."]},
+{n:"Milk Tart",c:"Cakes & Desserts",t:["bake","South African","classic"],p:"p151",s:"Halves easily (1 cup flour base, 2 1/4 cups milk filling)",i:["Base: 2 cups flour","1 egg","1/2 cup sugar","1/4 pound (±113 g) butter","2 tsp baking powder","Filling: 3 tsp butter","2 1/2 tbsp maizena","2 1/2 tbsp flour","3/4 cup sugar","3 eggs","4 1/2 cups milk","Cinnamon"],m:["Knead the base ingredients together, press into the mould and bake at 180°C for 10 minutes.","Boil 4 cups of the milk.","Mix the remaining filling ingredients with the last 1/2 cup milk.","Whisk into the boiling milk, stirring continuously until thick.","Pour into the baked base and dust with cinnamon."]},
+{n:"Choc Chip Cookies (Shaax)",c:"Biscuits & Cookies",t:["bake","chocolate","kids"],p:"p152",i:["224 g butter","1/2 cup sugar","3/4 cup brown sugar","1 tbsp molasses","1 egg","Vanilla","Salt","1 3/4 cups flour","1 cup choc chips","1 tsp baking soda"],m:["Beat the butter and sugars with the molasses.","Add the egg and vanilla.","Mix the dry ingredients and combine.","Put teaspoonfuls 2 inches apart.","Bake 8–10 minutes."]},
+{n:"Lemon Poppy Muffins",c:"Breakfast & Treats",t:["bake","muffins"],p:"p153",i:["57.5 g butter","6 tbsp sugar","1/2 tsp lemon zest","1 egg","2 tsp poppy seeds","1 cup flour","1 tsp baking powder","Pinch of salt","1/4 cup milk"],m:["Cream the sugar, zest and butter.","Add the egg and mix; mix in the poppy seeds.","Sift the dry ingredients and add alternately with the milk.","Bake 15–20 minutes."]},
+{n:"Almond Cake",c:"Cakes & Desserts",t:["bake","special occasion"],p:"p154",i:["1 cup cake flour, sifted","1 cup sugar","3/4 cup fresh cream","3 extra-large eggs","2 tsp baking powder","1 tbsp vanilla essence","Topping: slivered almonds","Sauce: 1/4 cup fresh cream, 50 g butter, 1/4 cup sugar"],m:["Beat all the cake ingredients for 1 minute.","Pour into a pan and bake at 180°C for 35 minutes.","Heat the butter in a saucepan; add the sugar and mix until melted in.","Add the cream and bring to a boil.","Remove the cake and turn the oven to grill.","Sprinkle the almonds over, pour on the sauce, and grill 1–2 minutes.","Cool before slicing."]},
+{n:"Banana Muffins",c:"Breakfast & Treats",t:["bake","muffins","freezes well"],p:"p155",i:["1 1/2 cups flour","1 tsp baking powder","1 tsp bicarb","1/2 tsp salt","1 tsp cinnamon","1/4 tsp nutmeg","3 large ripe bananas","85 g melted butter or coconut oil","2/3 cup brown sugar","1 large egg","1 tsp vanilla","2 tbsp milk","Nuts (add last)"],m:["Mix the wet ingredients with the sugar.","Mix in the dry ingredients; fold in nuts last.","Bake at 218°C for 5 minutes, then reduce to 177°C and bake 16–18 minutes."]},
+{n:"Maple Syrup Jumbles",c:"Biscuits & Cookies",t:["no bake-ish","kids","lunchbox"],p:"p156",i:["180 g butter","2/3 cup maple syrup or honey","3 tbsp castor sugar","8 cups cornflakes","1 cup nuts","1/2 cup coconut","2 tbsp sesame seeds"],m:["Stir the butter, syrup and sugar over low heat until the butter melts; boil uncovered 2 minutes.","Combine the rest in a bowl and gently stir in the butter mixture.","Drop spoonfuls into foil cups.","Bake 8 minutes or until lightly browned."]},
+{n:"Coconut Slice",c:"Biscuits & Cookies",t:["bake","coconut","tea time"],p:"p157",s:"No need to use a machine",i:["1 cup flour","Pinch of salt","1 1/2 tsp baking powder","3/4 cup castor sugar","1 cup coconut","125 g melted butter","1/2 cup milk","2 eggs","1 tsp vanilla","Icing: 1 1/3 cups icing sugar, 1 tbsp butter, 2 tbsp boiling water, 1 drop pink colour, coconut to decorate"],m:["Preheat the oven to 170°C.","Mix the dry ingredients with the melted butter; add the wet ingredients and stir.","Bake 25–30 minutes.","Icing: mix the butter and icing sugar with enough boiling water for a thick paste; add the colour.","Spread over and scatter with coconut."]},
+{n:"Dhaltera",c:"Cakes & Desserts",t:["fried","traditional","syrup"],p:"p158",i:["1 cup flour","1 tsp baking powder","1/2 tbsp ghee","Pinch of salt","1/2 cup sour milk","Syrup: 1/2 cup water, 1/2 cup sugar, saffron, drop of egg-yellow colour"],m:["Make a dough with the flour, baking powder, ghee, salt and sour milk.","Roll out 1/2 cm thick and cut.","Fry in deep oil.","Boil the syrup until sticky and dip or drizzle."]},
+{n:"Cornflake Biscuits",c:"Biscuits & Cookies",t:["bake","dates","tea time"],p:"p159",i:["250 g butter","3/4 cup sugar","2 eggs","1/2 tsp vanilla","2 1/2 cups flour","1 tsp baking powder","1 1/2 cups chopped dates","1 cup almonds","Cornflakes (1/2 cup in the dough + more for rolling)"],m:["Cream the butter and sugar; beat in the eggs.","Add the dates and nuts, then the vanilla and baking powder.","Add the flour and 1/2 cup cornflakes.","Make small balls and roll in cornflakes.","Bake at 180°C until golden (fan oven: 170°C, 20 minutes)."]},
+{n:"Marshmallow Cake",c:"Cakes & Desserts",t:["bake","coconut","tea time"],p:"p160",i:["5 eggs","500 ml castor sugar","250 ml oil","1 tsp vanilla","500 ml flour","4 slightly heaped tsp baking powder","250 ml milk","Toasted coconut","Syrup: 1/2 cup sugar + 1/2 cup water, boiled"],m:["Beat the eggs, sugar and oil.","Add the vanilla, flour, baking powder and milk.","Bake in an oven pan at 180°C for 25–30 minutes.","When cool, cut into blocks, brush with the syrup and roll in toasted coconut."]},
+{n:"Pancake Traybake",c:"Breakfast & Treats",t:["bake","breakfast","berries"],p:"p161",i:["1 cup flour","1 1/2 tsp baking powder","2 1/2 tbsp sugar","1 egg","3/4 cup milk","2 tbsp melted butter","1 tsp vanilla","Berries, for the top"],m:["Combine the wet and dry ingredients in separate bowls.","Beat the wet, then fold in the dry.","Pour into a tray and top with berries.","Bake at 180°C for 10–15 minutes."]},
+{n:"Starbucks Banana Loaf",c:"Cakes & Desserts",t:["bake","loaf","copycat"],p:"p162",i:["2 cups flour","1 tsp baking powder","1 tsp bicarb","1/4 tsp salt","1 egg","1/2 + 1/8 cup white sugar","1/2 cup brown sugar","1/2 cup oil","2 tbsp buttermilk or milk","1/2 tsp vanilla","4 bananas, mashed well","1/2 cup chopped pecans","Brown sugar + cinnamon (optional, for the top)"],m:["Sift the dry ingredients.","Beat the wet ingredients; mix together.","Add the vanilla, milk and bananas.","Mix in the pecans and pour into a loaf pan.","Bake at 180°C for 45–65 minutes; sprinkle brown sugar and cinnamon on top if you like."]},
+{n:"Best Ever Brownies",c:"Cakes & Desserts",t:["bake","chocolate"],p:"p163",s:"From Bigger Bolder Baking",i:["112.5 g melted, cooled butter","1 tbsp oil","1/2 cup + 1 tbsp brown sugar","1/2 cup + 1 tbsp sugar","2 eggs","1/2 cup flour","1/2 cup cocoa","2 tsp vanilla","1/2 tsp salt","1 cup chocolate chunks"],m:["Beat the sugars with the butter and oil.","Beat in the eggs, vanilla and salt.","Fold in the dry ingredients and chocolate.","Bake at 175°C for ± 30 minutes."]},
+{n:"Maska (Fooi Paadi)",c:"Biscuits & Cookies",t:["bake","fennel","tea time"],p:"p164",i:["3 1/2 cups flour","1/4 cup maizena","1 tsp salt","4 1/2 tsp baking powder","1/2 cup sugar","2 tbsp saumph (fennel seed)","250 g butter","250 ml fresh cream","Egg yolk or milk, for brushing","Sesame seeds"],m:["Mix the flour, maizena, salt, baking powder, sugar and fennel.","Rub in the butter to breadcrumbs.","Make a dough with the fresh cream.","Roll and cut into shapes; brush with egg yolk or milk and sprinkle sesame.","Bake at 180°C until done; leave to crisp in the warmer."]},
+{n:"Pineapple Dessert",c:"Cakes & Desserts",t:["no bake","fridge dessert","quick"],p:"p165",i:["250 ml cream, whipped","250 ml sour cream","2/3 tin condensed milk","1 tin pineapple pieces, drained"],m:["Mix the whipped cream and sour cream.","Add the condensed milk.","Fold in the pineapple pieces (no syrup).","Chill before serving."]},
+{n:"Pancakes (Crepes)",c:"Breakfast & Treats",t:["breakfast","classic"],p:"p166",i:["100 g flour","Pinch of salt","4 tbsp sugar","400 ml milk","2 eggs","1 tbsp oil"],m:["Whisk the flour, salt and sugar; make a well.","Add the eggs, some of the milk and the oil.","Mix until no lumps remain, adding the rest of the milk.","Fry thin in a hot pan."]},
+{n:"Waffles",c:"Breakfast & Treats",t:["breakfast","kids"],p:"p167",i:["2 eggs","1/2 cup sugar","1 tsp vanilla","3 tsp baking powder","2 cups flour","1/4 cup melted butter or oil","1 1/2 cups milk"],m:["Beat the wet ingredients.","Add the dry ingredients and beat until smooth.","Cook in a hot waffle iron."]},
+{n:"French Toast",c:"Breakfast & Treats",t:["breakfast","quick"],p:"p168",i:["2 eggs","1 tsp vanilla","1 tsp cinnamon","3 tbsp sugar","1 cup milk","Pinch of salt","Bread"],m:["Whisk everything together.","Dip the bread and fry in butter until golden on both sides."]},
+{n:"Chocolate Cake",c:"Cakes & Desserts",t:["bake","chocolate","classic"],p:"p169",i:["2 cups flour","2 cups sugar","3/4 cup cocoa","2 tsp bicarb","1 tsp baking powder","2 eggs","1 cup strong coffee","1 cup buttermilk","1/2 cup oil","1 tbsp vanilla","Frosting: 125 g butter/margarine, 3 cups icing sugar, 1 tbsp vanilla, 2 tbsp milk (+ cocoa for chocolate)"],m:["Mix everything together and bake at 180°C until a skewer comes out clean.","Frosting: soften the butter at room temperature — do not microwave.","Add the icing sugar one cup at a time, beating until fluffy; add the milk and vanilla.","For chocolate frosting add cocoa 1 tbsp at a time (if too sweet, add 1 tbsp maizena)."]},
+{n:"Lemon Crinkle Cookies",c:"Biscuits & Cookies",t:["bake","lemon"],p:"p170",i:["Zest of 2 lemons","200 g (1 cup) sugar","110 g butter","1 egg","3 tbsp lemon juice","2 cups (276 g) flour","1/2 tsp bicarb","1/2 tsp salt"],m:["Massage the zest into the sugar.","Beat in the butter until light and fluffy.","Beat in the egg; add the lemon juice.","Combine the flour, bicarb and salt and fold in.","Fridge 3 hours.","Bake 14–16 minutes."]},
+{n:"Magnum Iced Coffee",c:"Drinks",t:["drinks","summer"],p:"p171",i:["1 Magnum Almond","1 handful crushed ice","1/2 cup strong coffee"],m:["Put everything in a blender.","Blend until smooth."]},
+{n:"Summer Mocktail",c:"Drinks",t:["drinks","summer","kids"],p:"p172",i:["Lots of ice","Grenadine","Blue Energade","Sprite"],m:["Fill a glass with lots of ice.","Pour grenadine a quarter of the way.","Pour blue Energade to halfway.","Top with Sprite — don't stir, let it layer."]}
+];
+
+/* ============ state ============ */
+R.forEach((r,ix)=>r.id=ix);
+const CATS=[...new Set(R.map(r=>r.c))];
+const LS={get(k,d){try{const v=localStorage.getItem("anu."+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("anu."+k,JSON.stringify(v))}catch(e){}}};
+let favs=new Set(LS.get("favs",[]));
+let plan=LS.get("plan",{});            // {Mon:[id,...],...}
+let fridge=LS.get("fridge",[]);        // [str,...]
+let shopTicks=new Set(LS.get("ticks",[]));
+let curCat="All", curQ="";
+const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+document.getElementById("rcount").textContent=R.length;
+
+/* ============ toast ============ */
+let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200)}
+
+/* ============ tabs ============ */
+document.getElementById("tabs").addEventListener("click",e=>{
+  const b=e.target.closest(".tab");if(!b)return;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
+  document.getElementById("v-"+b.dataset.v).classList.add("on");
+  if(b.dataset.v==="shopping")renderShop();
+  if(b.dataset.v==="fridge")renderFridge();
+  if(b.dataset.v==="planner")renderWeek();
+});
+
+/* ============ recipe cards ============ */
+function cardHTML(r,extra){
+  return `<article class="card" data-id="${r.id}" tabindex="0" role="button" aria-label="${esc(r.n)}">
+    <span class="eyebrow">${esc(r.c)}</span>
+    <h3>${esc(r.n)}</h3>
+    <p class="prev">${esc(r.i.slice(0,4).join(" · "))}</p>
+    ${extra||""}
+    <div class="foot"><span class="pg">notebook ${esc(r.p)}</span>
+    <button class="heart ${favs.has(r.id)?"on":""}" data-fav="${r.id}" aria-label="favourite" title="Favourite">&#10084;</button></div>
+  </article>`;
+}
+function matches(r,q){
+  if(!q)return true;const hay=(r.n+" "+r.c+" "+(r.t||[]).join(" ")+" "+r.i.join(" ")).toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(w=>hay.includes(w));
+}
+function renderGrid(){
+  const grid=$("#grid");
+  let list=R.filter(r=>(curCat==="All"||(curCat==="♥ Favourites"?favs.has(r.id):r.c===curCat))&&matches(r,curQ));
+  $("#rnote").textContent=list.length?`${list.length} recipe${list.length===1?"":"s"}${curQ?` for “${curQ}”`:""}${curCat!=="All"?` in ${curCat}`:""}`:"";
+  grid.innerHTML=list.length?list.map(r=>cardHTML(r)).join(""):`<div class="empty" style="grid-column:1/-1"><div class="big">Nothing in the pot</div>Try another word — maybe “chicken”, “kebab” or “coconut”.</div>`;
+}
+function renderChips(){
+  const chips=["All","♥ Favourites",...CATS];
+  $("#catchips").innerHTML=chips.map(c=>`<button class="chip ${c===curCat?"on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
+}
+$("#catchips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;curCat=b.dataset.cat;renderChips();renderGrid()});
+$("#q").addEventListener("input",e=>{curQ=e.target.value.trim();renderGrid()});
+$("#luckyBtn").addEventListener("click",()=>openSheet(R[Math.floor(Math.random()*R.length)].id));
+
+/* card clicks (grid + fridge grid) */
+function gridClick(e){
+  const f=e.target.closest("[data-fav]");
+  if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);LS.set("favs",[...favs]);f.classList.toggle("on");e.stopPropagation();if(curCat==="♥ Favourites")renderGrid();return}
+  const c=e.target.closest(".card");if(c)openSheet(+c.dataset.id);
+}
+$("#grid").addEventListener("click",gridClick);
+$("#fgrid").addEventListener("click",gridClick);
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("card"))openSheet(+e.target.dataset.id)});
+
+/* ============ detail sheet ============ */
+function openSheet(id){
+  const r=R.find(x=>x.id===id);if(!r)return;
+  const sh=$("#sheet");
+  sh.innerHTML=`<button class="x" data-close aria-label="Close">&times;</button>
+    <span class="eyebrow">${esc(r.c)}</span>
+    <h2>${esc(r.n)}</h2>
+    <p class="src">from Anu&rsquo;s notebook, page ${esc(r.p)}${r.s?" · "+esc(r.s):""}</p>
+    <div class="tagrow">${(r.t||[]).map(t=>`<span class="tagpill">${esc(t)}</span>`).join("")}</div>
+    <div class="sheet-actions">
+      <button class="btn ${favs.has(r.id)?"primary":""}" data-favbtn>${favs.has(r.id)?"♥ Favourited":"♡ Favourite"}</button>
+      <button class="btn" data-plandish>+ Add to week planner</button>
+    </div>
+    <h4>Ingredients</h4>
+    <ul class="ing">${r.i.map((it,ix)=>`<li><input type="checkbox" id="ing${ix}"><label for="ing${ix}">${esc(it)}</label></li>`).join("")}</ul>
+    <h4>Method</h4>
+    <ol class="steps">${r.m.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+    <p class="note">Tick ingredients off as you prep — ticks reset when you close the recipe.</p>`;
+  sh.querySelector("[data-favbtn]").addEventListener("click",ev=>{
+    favs.has(r.id)?favs.delete(r.id):favs.add(r.id);LS.set("favs",[...favs]);
+    ev.target.textContent=favs.has(r.id)?"♥ Favourited":"♡ Favourite";
+    ev.target.classList.toggle("primary",favs.has(r.id));renderGrid();
+  });
+  sh.querySelector("[data-plandish]").addEventListener("click",()=>pickDay(r.id));
+  $("#overlay").classList.add("open");document.body.style.overflow="hidden";
+}
+function closeSheet(){$("#overlay").classList.remove("open");document.body.style.overflow=""}
+$("#overlay").addEventListener("click",e=>{if(e.target.id==="overlay"||e.target.closest("[data-close]"))closeSheet()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSheet();closePick()}});
+
+/* ============ planner ============ */
+function planCount(){return Object.values(plan).reduce((a,l)=>a+l.length,0)}
+function renderPlanBadge(){const c=planCount();const el=$("#plancnt");el.hidden=!c;el.textContent=c}
+function renderWeek(){
+  const wk=$("#week");
+  wk.innerHTML=DAYS.map(d=>{
+    const meals=(plan[d]||[]).map((id,ix)=>{
+      const r=R.find(x=>x.id===id);if(!r)return"";
+      return `<div class="meal"><span class="mn" data-open="${id}">${esc(r.n)}</span><button data-del="${d}:${ix}" aria-label="Remove">✕</button></div>`;
+    }).join("");
+    return `<div class="day"><div class="dh"><span class="dname">${d}</span></div>${meals}<button class="addmeal" data-day="${d}">+ add a dish</button></div>`;
+  }).join("");
+  renderPlanBadge();
+}
+$("#week").addEventListener("click",e=>{
+  const del=e.target.closest("[data-del]");
+  if(del){const[d,ix]=del.dataset.del.split(":");plan[d].splice(+ix,1);if(!plan[d].length)delete plan[d];LS.set("plan",plan);renderWeek();return}
+  const op=e.target.closest("[data-open]");if(op){openSheet(+op.dataset.open);return}
+  const add=e.target.closest("[data-day]");if(add)openPick(add.dataset.day);
+});
+$("#clearWeekBtn").addEventListener("click",()=>{if(!planCount())return;plan={};LS.set("plan",plan);renderWeek();toast("Week cleared")});
+$("#autofillBtn").addEventListener("click",()=>{
+  const mains=R.filter(r=>["Chicken","Meat & Mince","Rice & One-Pot","Pasta & Bakes","Soups"].includes(r.c));
+  const used=new Set(Object.values(plan).flat());
+  DAYS.forEach(d=>{
+    if((plan[d]||[]).length)return;
+    const pool=mains.filter(r=>!used.has(r.id));
+    const pick=pool.length?pool[Math.floor(Math.random()*pool.length)]:mains[Math.floor(Math.random()*mains.length)];
+    plan[d]=[pick.id];used.add(pick.id);
+  });
+  LS.set("plan",plan);renderWeek();toast("Week planned — check the shopping list");
+});
+
+/* day picker */
+let pickTargetDay=null,pickForRecipe=null;
+function openPick(day){
+  pickTargetDay=day;pickForRecipe=null;
+  const ps=$("#picksheet");
+  ps.innerHTML=`<button class="x" data-closepick aria-label="Close">&times;</button>
+    <span class="eyebrow">${esc(day)}</span><h2 style="font-size:28px">Add a dish</h2>
+    <input id="pickq" type="search" placeholder="Search the book…" style="width:100%;padding:12px 16px;font-size:15px;border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);margin-top:10px" autocomplete="off">
+    <div class="pick-list" id="picklist"></div>`;
+  renderPickList("");
+  ps.querySelector("#pickq").addEventListener("input",e=>renderPickList(e.target.value.trim()));
+  $("#pickoverlay").classList.add("open");
+  ps.querySelector("#pickq").focus();
+}
+function pickDay(recipeId){
+  pickForRecipe=recipeId;pickTargetDay=null;
+  const ps=$("#picksheet");
+  const r=R.find(x=>x.id===recipeId);
+  ps.innerHTML=`<button class="x" data-closepick aria-label="Close">&times;</button>
+    <span class="eyebrow">Week planner</span><h2 style="font-size:28px">Which day for ${esc(r.n)}?</h2>
+    <div class="pick-list">${DAYS.map(d=>`<div class="pick-item" data-pickday="${d}"><span>${d}</span><span class="pc">${(plan[d]||[]).length?(plan[d].length+" dish"+(plan[d].length>1?"es":"")):"free"}</span></div>`).join("")}</div>`;
+  $("#pickoverlay").classList.add("open");
+}
+function renderPickList(q){
+  const list=R.filter(r=>matches(r,q)).slice(0,60);
+  $("#picklist").innerHTML=list.map(r=>`<div class="pick-item" data-pick="${r.id}"><span>${esc(r.n)}</span><span class="pc">${esc(r.c)}</span></div>`).join("");
+}
+function closePick(){$("#pickoverlay").classList.remove("open")}
+$("#pickoverlay").addEventListener("click",e=>{
+  if(e.target.id==="pickoverlay"||e.target.closest("[data-closepick]")){closePick();return}
+  const pi=e.target.closest("[data-pick]");
+  if(pi){const id=+pi.dataset.pick;(plan[pickTargetDay]=plan[pickTargetDay]||[]).push(id);LS.set("plan",plan);renderWeek();closePick();toast(`Added to ${pickTargetDay}`);return}
+  const pd=e.target.closest("[data-pickday]");
+  if(pd){const d=pd.dataset.pickday;(plan[d]=plan[d]||[]).push(pickForRecipe);LS.set("plan",plan);renderWeek();renderPlanBadge();closePick();closeSheet();toast(`Added to ${d}`)}
+});
+
+/* ============ fridge ============ */
+const PANTRY=["salt","pepper","oil","ghee","butter","water","sugar","arad","turmeric","jeeru","dhana","masala","garlic","ginger","spice","aromat","vinegar","colour","chilli powder","baking powder","bicarb","vanilla","flour","tenderiser","curry leaves","mustard seeds","elaichi","cinnamon","clove","saffron","dhania","essence","nutmeg","paprika","herbs","lemon pepper","tomato paste","tomato puree","worcester","achaar"];
+const QUICK=["chicken","mince","steak","potatoes","rice","pasta","eggs","milk","cream","yoghurt","cheese","coconut milk","mushrooms","peppers","tomatoes","onions","sweetcorn","butternut","spinach","bananas","dates","condensed milk","bread"];
+function fridgeSave(){LS.set("fridge",fridge)}
+function addFridge(v){
+  v=v.trim().toLowerCase();if(!v)return;
+  if(!fridge.includes(v)){fridge.push(v);fridgeSave()}
+  $("#fq").value="";renderFridge();
+}
+$("#faddBtn").addEventListener("click",()=>addFridge($("#fq").value));
+$("#fq").addEventListener("keydown",e=>{if(e.key==="Enter")addFridge(e.target.value)});
+function ingCore(s){return s.toLowerCase()}
+function isPantry(s){const l=s.toLowerCase();return PANTRY.some(p=>l.includes(p))&&!QUICK.some(q=>l.includes(q))}
+function scoreRecipe(r){
+  const lines=r.i.filter(i=>!/^(sauce|dressing|filling|vagaar|syrup|icing|topping|coating|marinade|base|to serve|per |gravy|frosting|add last|braise|rice:|spinach:|liquidise|best recipe|or:|butter icing|lemington|red cake|dumplings|sweetcorn:|tawa:|green:|med:|red pepper:|chilli paste:|pad thai)/i.test(i.trim())||i.length>30);
+  const nonPantry=lines.filter(l=>!isPantry(l));
+  if(!nonPantry.length)return null;
+  const have=[],miss=[];
+  nonPantry.forEach(l=>{
+    const ll=l.toLowerCase();
+    (fridge.some(f=>ll.includes(f)||f.includes(ll))?have:miss).push(l);
+  });
+  return {r,have,miss,score:have.length/nonPantry.length};
+}
+function renderFridge(){
+  $("#quickadd").innerHTML=QUICK.map(q=>`<button class="chip ${fridge.includes(q)?"have on":""}" data-qa="${q}">${q}</button>`).join("");
+  $("#fchips").innerHTML=fridge.map((f,ix)=>`<span class="fchip">${esc(f)}<button data-rm="${ix}" aria-label="Remove ${esc(f)}">✕</button></span>`).join("");
+  const note=$("#fnote"),grid=$("#fgrid");
+  if(!fridge.length){note.textContent="";grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">What have you got?</div>Add a few things — chicken, cream, mushrooms — and the book will do the thinking.</div>`;return}
+  const scored=R.map(scoreRecipe).filter(Boolean).filter(s=>s.have.length>0).sort((a,b)=>b.score-a.score||b.have.length-a.have.length).slice(0,24);
+  note.textContent=scored.length?`Top matches for what you have — pantry basics are assumed.`:"No matches yet — add a main ingredient like chicken or mince.";
+  grid.innerHTML=scored.map(s=>{
+    const pct=Math.round(s.score*100);
+    const missTxt=s.miss.length?`Missing: ${s.miss.slice(0,3).map(m=>m.split(",")[0]).join(", ")}${s.miss.length>3?"…":""}`:"You have everything that matters!";
+    return cardHTML(s.r,`<div class="matchbar"><i style="width:${pct}%"></i></div><div class="match-meta"><b>${pct}% there</b><span>${s.have.length}/${s.have.length+s.miss.length} key items</span></div><p class="missing">${esc(missTxt)}</p>`);
+  }).join("");
+}
+$("#quickadd").addEventListener("click",e=>{const b=e.target.closest("[data-qa]");if(!b)return;const v=b.dataset.qa;
+  fridge.includes(v)?fridge.splice(fridge.indexOf(v),1):fridge.push(v);fridgeSave();renderFridge()});
+$("#fchips").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");if(!b)return;fridge.splice(+b.dataset.rm,1);fridgeSave();renderFridge()});
+
+/* ============ shopping list ============ */
+function renderShop(){
+  const wrap=$("#shoplist");
+  const items=[];
+  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=R.find(x=>x.id===id);if(r)items.push({d,r})}));
+  if(!items.length){wrap.innerHTML=`<div class="empty"><div class="big">The list writes itself</div>Plan a few dishes in the Week Planner and every ingredient lands here, grouped by dish.</div>`;return}
+  wrap.innerHTML=items.map(({d,r})=>`<div class="shop-group"><h3>${esc(r.n)}</h3><p class="gsub">${d} · notebook ${esc(r.p)}</p>
+    <ul class="ing">${r.i.map((it,ix)=>{const key=r.id+":"+ix;return `<li><input type="checkbox" data-tick="${key}" id="s${r.id}_${ix}" ${shopTicks.has(key)?"checked":""}><label for="s${r.id}_${ix}">${esc(it)}</label></li>`}).join("")}</ul></div>`).join("");
+}
+$("#shoplist").addEventListener("change",e=>{const t=e.target.closest("[data-tick]");if(!t)return;
+  t.checked?shopTicks.add(t.dataset.tick):shopTicks.delete(t.dataset.tick);LS.set("ticks",[...shopTicks])});
+$("#copyListBtn").addEventListener("click",()=>{
+  const lines=[];
+  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=R.find(x=>x.id===id);if(!r)return;lines.push(`${d} — ${r.n}`);r.i.forEach(i=>lines.push("  • "+i));lines.push("")}));
+  if(!lines.length){toast("Plan some dishes first");return}
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>toast("Shopping list copied")).catch(()=>toast("Couldn't copy — long-press to select"));
+});
+
+/* ============ init ============ */
+renderChips();renderGrid();renderWeek();renderFridge();
+</script>

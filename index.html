@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Anu's Recipe Book</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
@@ -30,6 +31,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html,body{margin:0;padding:0}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
 button{font-family:var(--ui);cursor:pointer}
@@ -139,8 +141,38 @@ input{font-family:var(--ui)}
 .pick-item:hover{border-color:var(--saffron)}
 .pick-item .pc{font-family:var(--ui);font-size:11px;color:var(--ink-soft);white-space:nowrap}
 .view{display:none}.view.on{display:block}
+/* Photos */
+.card .shot{margin:-18px -18px 2px;height:150px;overflow:hidden;border-radius:13px 13px 0 0;background:var(--wash)}
+.card .shot img{width:100%;height:100%;object-fit:cover;display:block}
+.own-badge{display:inline-block;font-family:var(--ui);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--leaf);background:var(--leaf-wash);border-radius:999px;padding:2px 7px;margin-left:7px;vertical-align:2px}
+.photo-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px}
+.shot-tile{position:relative;flex:0 0 auto;width:132px;height:100px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--wash);cursor:zoom-in}
+.shot-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.shot-tile .rm{position:absolute;top:5px;right:5px;width:24px;height:24px;border:none;border-radius:50%;background:rgba(20,15,10,.62);color:#fff;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.shot-tile .rm:hover{background:var(--chilli)}
+.addshot{flex:0 0 auto;width:132px;height:100px;border:1.5px dashed var(--line);border-radius:12px;background:none;color:var(--ink-soft);font-family:var(--ui);font-size:12.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;line-height:1.25}
+.addshot:hover{border-color:var(--saffron);color:var(--saffron-deep)}
+.addshot b{font-size:19px;line-height:1;font-weight:400}
+.lightbox{position:fixed;inset:0;background:rgba(18,13,9,.9);z-index:130;display:none;align-items:center;justify-content:center;padding:20px}
+.lightbox.open{display:flex}
+.lightbox img{max-width:100%;max-height:92vh;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+/* Add-a-recipe form */
+.form{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px clamp(18px,3vw,30px) 24px;max-width:760px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:18px}
+.field label{font-family:var(--ui);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft)}
+.field .hint{font-family:var(--ui);font-size:12.5px;color:var(--ink-soft);font-weight:400;text-transform:none;letter-spacing:0}
+.field input,.field select,.field textarea{font-family:var(--body);font-size:15.5px;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;width:100%}
+.field textarea{resize:vertical;min-height:124px;line-height:1.55}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--saffron);outline:none}
+.field input::placeholder,.field textarea::placeholder{color:var(--ink-soft);opacity:.75}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:2px;padding-top:18px}
+.req{color:var(--chilli)}
+.backup{background:var(--wash);border-radius:14px;padding:16px 18px 18px;margin-top:22px;max-width:760px}
+.backup h3{font-family:var(--display);font-weight:500;font-size:20px;margin:0 0 4px}
+.backup p{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:0 0 12px;max-width:64ch;line-height:1.5}
 @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
-@media (max-width:560px){.masthead{padding-top:30px}.sheet{padding:24px 18px 30px}}
+@media (max-width:560px){.masthead{padding-top:30px}.sheet{padding:24px 18px 30px}.row2{grid-template-columns:1fr;gap:0}}
 </style>
 <div class="shell">
   <header class="masthead">
@@ -153,6 +185,7 @@ input{font-family:var(--ui)}
     <button class="tab" data-v="planner">Week Planner <span class="cnt" id="plancnt" hidden></span></button>
     <button class="tab" data-v="fridge">What&rsquo;s in the Fridge</button>
     <button class="tab" data-v="shopping">Shopping List</button>
+    <button class="tab" data-v="add">Add a Recipe</button>
   </nav>
 
   <section class="view on" id="v-recipes">
@@ -200,7 +233,65 @@ input{font-family:var(--ui)}
     <p class="plan-sub">Built from your week planner &mdash; one group per planned dish. Tick things off as you shop.</p>
     <div id="shoplist"></div>
   </section>
+
+  <section class="view" id="v-add">
+    <div class="plan-head"><h2 id="formTitle">Write a new page</h2></div>
+    <p class="plan-sub" id="formSub">Add your own recipe to the book &mdash; a family favourite, something you&rsquo;ve adapted, or a dish you want to remember. It joins the search, the planner and the fridge matcher like any other recipe.</p>
+    <form class="form" id="recipeForm" novalidate>
+      <div class="field">
+        <label>Photos <span class="hint">optional &mdash; a picture of the finished dish</span></label>
+        <div class="photo-strip" id="formShots"></div>
+      </div>
+      <div class="field">
+        <label for="fName">Recipe name <span class="req">*</span></label>
+        <input id="fName" maxlength="90" placeholder="e.g. Nani&rsquo;s Sunday Biryani" autocomplete="off">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="fCat">Category</label>
+          <select id="fCat"></select>
+        </div>
+        <div class="field">
+          <label for="fSrc">Whose recipe is it? <span class="hint">optional</span></label>
+          <input id="fSrc" maxlength="80" placeholder="e.g. From Aunty Fatima" autocomplete="off">
+        </div>
+      </div>
+      <div class="field" id="newCatWrap" hidden>
+        <label for="fNewCat">Name the new category</label>
+        <input id="fNewCat" maxlength="40" placeholder="e.g. Pickles &amp; Preserves" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fTags">Tags <span class="hint">comma separated &mdash; helps you find it later</span></label>
+        <input id="fTags" maxlength="120" placeholder="e.g. curry, weeknight, freezes well" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="fIng">Ingredients <span class="req">*</span> <span class="hint">one per line</span></label>
+        <textarea id="fIng" placeholder="1 kg chicken, cubed&#10;2 tsp ginger garlic&#10;1 tin coconut milk"></textarea>
+      </div>
+      <div class="field">
+        <label for="fMeth">Method <span class="req">*</span> <span class="hint">one step per line</span></label>
+        <textarea id="fMeth" placeholder="Braise the onions until golden.&#10;Add the chicken and spices; cook until dry.&#10;Stir in the coconut milk and simmer 15 minutes."></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn primary" id="saveBtn">Save to the book</button>
+        <button type="button" class="btn ghost" id="resetBtn">Clear form</button>
+        <button type="button" class="btn ghost danger" id="deleteBtn" hidden>Delete recipe</button>
+      </div>
+    </form>
+    <div class="backup">
+      <h3>Keep a copy</h3>
+      <p>Recipes and photos you add live in this browser only. Save a backup to keep them safe, move them to your phone, or send them to family &mdash; then load it back here any time.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="exportBtn">Download backup</button>
+        <button class="btn" id="copyBackupBtn">Copy as text</button>
+        <button class="btn" id="importBtn">Load a backup</button>
+      </div>
+    </div>
+  </section>
 </div>
+<input type="file" id="photoFile" accept="image/*" multiple hidden>
+<input type="file" id="importFile" accept="application/json,.json,.txt" hidden>
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt="Recipe photo"></div>
 <div class="overlay" id="overlay"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div class="overlay" id="pickoverlay"><div class="sheet pickwrap" id="picksheet" role="dialog" aria-modal="true"></div></div>
 <div class="toast" id="toast"></div>
@@ -364,41 +455,56 @@ const R = [
 ];
 
 /* ============ state ============ */
-R.forEach((r,ix)=>r.id=ix);
-const CATS=[...new Set(R.map(r=>r.c))];
-const LS={get(k,d){try{const v=localStorage.getItem("anu."+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("anu."+k,JSON.stringify(v))}catch(e){}}};
-let favs=new Set(LS.get("favs",[]));
-let plan=LS.get("plan",{});            // {Mon:[id,...],...}
-let fridge=LS.get("fridge",[]);        // [str,...]
-let shopTicks=new Set(LS.get("ticks",[]));
+/* Recipe ids are strings: "b<n>" for the notebook, "c<key>" for ones you add. */
+R.forEach((r,ix)=>{r.id="b"+ix});
+const LS={get(k,d){try{const v=localStorage.getItem("anu."+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem("anu."+k,JSON.stringify(v));return true}catch(e){return false}}};
+const mid=v=>typeof v==="number"?"b"+v:v;   // older saves used bare numbers
+let favs=new Set((LS.get("favs",[])||[]).map(mid));
+let plan=LS.get("plan",{})||{};        // {Monday:[id,...],...}
+Object.keys(plan).forEach(d=>{plan[d]=(plan[d]||[]).map(mid)});
+let fridge=LS.get("fridge",[])||[];    // [str,...]
+let shopTicks=new Set((LS.get("ticks",[])||[]).map(t=>/^\d+:/.test(t)?"b"+t:t));
+let custom=LS.get("custom",[])||[];    // recipes you added: same shape + own:true
+let photos=LS.get("photos",[])||[];    // [{id,r:recipeId,t:thumbDataUrl,ts}] — full size lives in IndexedDB
 let curCat="All", curQ="";
 const DAYS=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 const $=s=>document.querySelector(s);
-const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-document.getElementById("rcount").textContent=R.length;
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+/* your recipes sort first so a new one is the first thing you see */
+function all(){return custom.concat(R)}
+function byId(id){return all().find(x=>x.id===id)}
+function cats(){return [...new Set(all().map(r=>r.c))]}
+function countText(){const n=custom.length;return R.length+(n?` + ${n} of your own`:"")}
+function refreshCount(){document.getElementById("rcount").textContent=countText()}
+refreshCount();
 
 /* ============ toast ============ */
 let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200)}
 
 /* ============ tabs ============ */
-document.getElementById("tabs").addEventListener("click",e=>{
-  const b=e.target.closest(".tab");if(!b)return;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+function goTab(v){
+  document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.dataset.v===v));
   document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));
-  document.getElementById("v-"+b.dataset.v).classList.add("on");
-  if(b.dataset.v==="shopping")renderShop();
-  if(b.dataset.v==="fridge")renderFridge();
-  if(b.dataset.v==="planner")renderWeek();
+  document.getElementById("v-"+v).classList.add("on");
+  if(v==="shopping")renderShop();
+  if(v==="fridge")renderFridge();
+  if(v==="planner")renderWeek();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.getElementById("tabs").addEventListener("click",e=>{
+  const b=e.target.closest(".tab");if(!b)return;goTab(b.dataset.v);
 });
 
 /* ============ recipe cards ============ */
 function cardHTML(r,extra){
+  const shot=photosFor(r.id)[0];
   return `<article class="card" data-id="${r.id}" tabindex="0" role="button" aria-label="${esc(r.n)}">
+    ${shot?`<div class="shot"><img src="${shot.t}" alt="" loading="lazy"></div>`:""}
     <span class="eyebrow">${esc(r.c)}</span>
-    <h3>${esc(r.n)}</h3>
+    <h3>${esc(r.n)}${r.own?'<span class="own-badge">yours</span>':""}</h3>
     <p class="prev">${esc(r.i.slice(0,4).join(" · "))}</p>
     ${extra||""}
-    <div class="foot"><span class="pg">notebook ${esc(r.p)}</span>
+    <div class="foot"><span class="pg">${r.own?"your recipe":"notebook "+esc(r.p)}</span>
     <button class="heart ${favs.has(r.id)?"on":""}" data-fav="${r.id}" aria-label="favourite" title="Favourite">&#10084;</button></div>
   </article>`;
 }
@@ -408,40 +514,52 @@ function matches(r,q){
 }
 function renderGrid(){
   const grid=$("#grid");
-  let list=R.filter(r=>(curCat==="All"||(curCat==="♥ Favourites"?favs.has(r.id):r.c===curCat))&&matches(r,curQ));
+  let list=all().filter(r=>(curCat==="All"||(curCat==="♥ Favourites"?favs.has(r.id):curCat==="✎ Yours"?r.own:r.c===curCat))&&matches(r,curQ));
   $("#rnote").textContent=list.length?`${list.length} recipe${list.length===1?"":"s"}${curQ?` for “${curQ}”`:""}${curCat!=="All"?` in ${curCat}`:""}`:"";
-  grid.innerHTML=list.length?list.map(r=>cardHTML(r)).join(""):`<div class="empty" style="grid-column:1/-1"><div class="big">Nothing in the pot</div>Try another word — maybe “chicken”, “kebab” or “coconut”.</div>`;
+  grid.innerHTML=list.length?list.map(r=>cardHTML(r)).join(""):`<div class="empty" style="grid-column:1/-1"><div class="big">Nothing in the pot</div>${curCat==="✎ Yours"?"You haven’t added a recipe yet — open “Add a Recipe” to write your first one.":"Try another word — maybe “chicken”, “kebab” or “coconut”."}</div>`;
 }
 function renderChips(){
-  const chips=["All","♥ Favourites",...CATS];
+  const chips=["All","♥ Favourites",...(custom.length?["✎ Yours"]:[]),...cats()];
   $("#catchips").innerHTML=chips.map(c=>`<button class="chip ${c===curCat?"on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
 }
 $("#catchips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;curCat=b.dataset.cat;renderChips();renderGrid()});
 $("#q").addEventListener("input",e=>{curQ=e.target.value.trim();renderGrid()});
-$("#luckyBtn").addEventListener("click",()=>openSheet(R[Math.floor(Math.random()*R.length)].id));
+$("#luckyBtn").addEventListener("click",()=>{const a=all();openSheet(a[Math.floor(Math.random()*a.length)].id)});
 
 /* card clicks (grid + fridge grid) */
 function gridClick(e){
   const f=e.target.closest("[data-fav]");
-  if(f){const id=+f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);LS.set("favs",[...favs]);f.classList.toggle("on");e.stopPropagation();if(curCat==="♥ Favourites")renderGrid();return}
-  const c=e.target.closest(".card");if(c)openSheet(+c.dataset.id);
+  if(f){const id=f.dataset.fav;favs.has(id)?favs.delete(id):favs.add(id);LS.set("favs",[...favs]);f.classList.toggle("on");e.stopPropagation();if(curCat==="♥ Favourites")renderGrid();return}
+  const c=e.target.closest(".card");if(c)openSheet(c.dataset.id);
 }
 $("#grid").addEventListener("click",gridClick);
 $("#fgrid").addEventListener("click",gridClick);
-document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("card"))openSheet(+e.target.dataset.id)});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.classList&&e.target.classList.contains("card"))openSheet(e.target.dataset.id)});
 
 /* ============ detail sheet ============ */
+let sheetId=null;
+function sheetShotsHTML(id){
+  const ps=photosFor(id);
+  return `<div class="photo-strip">${ps.map(p=>`<div class="shot-tile" data-shot="${p.id}"><img src="${p.t}" alt="Photo of this dish"><button class="rm" data-rmshot="${p.id}" aria-label="Remove photo" title="Remove photo">&times;</button></div>`).join("")}
+    <button type="button" class="addshot" data-addshot><b>+</b>${ps.length?"Another photo":"Add a photo"}</button></div>`;
+}
 function openSheet(id){
-  const r=R.find(x=>x.id===id);if(!r)return;
+  const r=byId(id);if(!r)return;
+  sheetId=id;
   const sh=$("#sheet");
+  const src=r.own
+    ? `your recipe${r.s?" · "+esc(r.s):""}${r.ts?" · added "+new Date(r.ts).toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"}):""}`
+    : `from Anu&rsquo;s notebook, page ${esc(r.p)}${r.s?" · "+esc(r.s):""}`;
   sh.innerHTML=`<button class="x" data-close aria-label="Close">&times;</button>
     <span class="eyebrow">${esc(r.c)}</span>
     <h2>${esc(r.n)}</h2>
-    <p class="src">from Anu&rsquo;s notebook, page ${esc(r.p)}${r.s?" · "+esc(r.s):""}</p>
+    <p class="src">${src}</p>
     <div class="tagrow">${(r.t||[]).map(t=>`<span class="tagpill">${esc(t)}</span>`).join("")}</div>
+    ${sheetShotsHTML(id)}
     <div class="sheet-actions">
       <button class="btn ${favs.has(r.id)?"primary":""}" data-favbtn>${favs.has(r.id)?"♥ Favourited":"♡ Favourite"}</button>
       <button class="btn" data-plandish>+ Add to week planner</button>
+      ${r.own?'<button class="btn" data-editdish>Edit recipe</button>':""}
     </div>
     <h4>Ingredients</h4>
     <ul class="ing">${r.i.map((it,ix)=>`<li><input type="checkbox" id="ing${ix}"><label for="ing${ix}">${esc(it)}</label></li>`).join("")}</ul>
@@ -454,8 +572,24 @@ function openSheet(id){
     ev.target.classList.toggle("primary",favs.has(r.id));renderGrid();
   });
   sh.querySelector("[data-plandish]").addEventListener("click",()=>pickDay(r.id));
+  const ed=sh.querySelector("[data-editdish]");
+  if(ed)ed.addEventListener("click",()=>{closeSheet();loadForm(r.id);goTab("add")});
   $("#overlay").classList.add("open");document.body.style.overflow="hidden";
 }
+function refreshSheetShots(){
+  if(!sheetId)return;
+  const strip=$("#sheet").querySelector(".photo-strip");
+  if(strip)strip.outerHTML=sheetShotsHTML(sheetId);
+}
+/* photo actions inside the open recipe */
+$("#sheet").addEventListener("click",e=>{
+  const rm=e.target.closest("[data-rmshot]");
+  if(rm){e.stopPropagation();removePhoto(rm.dataset.rmshot).then(()=>{refreshSheetShots();renderGrid();renderFridge()});return}
+  const add=e.target.closest("[data-addshot]");
+  if(add){pickPhotoFor(sheetId);return}
+  const tile=e.target.closest("[data-shot]");
+  if(tile)openLightbox(tile.dataset.shot);
+});
 function closeSheet(){$("#overlay").classList.remove("open");document.body.style.overflow=""}
 $("#overlay").addEventListener("click",e=>{if(e.target.id==="overlay"||e.target.closest("[data-close]"))closeSheet()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSheet();closePick()}});
@@ -467,7 +601,7 @@ function renderWeek(){
   const wk=$("#week");
   wk.innerHTML=DAYS.map(d=>{
     const meals=(plan[d]||[]).map((id,ix)=>{
-      const r=R.find(x=>x.id===id);if(!r)return"";
+      const r=byId(id);if(!r)return"";
       return `<div class="meal"><span class="mn" data-open="${id}">${esc(r.n)}</span><button data-del="${d}:${ix}" aria-label="Remove">✕</button></div>`;
     }).join("");
     return `<div class="day"><div class="dh"><span class="dname">${d}</span></div>${meals}<button class="addmeal" data-day="${d}">+ add a dish</button></div>`;
@@ -477,12 +611,12 @@ function renderWeek(){
 $("#week").addEventListener("click",e=>{
   const del=e.target.closest("[data-del]");
   if(del){const[d,ix]=del.dataset.del.split(":");plan[d].splice(+ix,1);if(!plan[d].length)delete plan[d];LS.set("plan",plan);renderWeek();return}
-  const op=e.target.closest("[data-open]");if(op){openSheet(+op.dataset.open);return}
+  const op=e.target.closest("[data-open]");if(op){openSheet(op.dataset.open);return}
   const add=e.target.closest("[data-day]");if(add)openPick(add.dataset.day);
 });
 $("#clearWeekBtn").addEventListener("click",()=>{if(!planCount())return;plan={};LS.set("plan",plan);renderWeek();toast("Week cleared")});
 $("#autofillBtn").addEventListener("click",()=>{
-  const mains=R.filter(r=>["Chicken","Meat & Mince","Rice & One-Pot","Pasta & Bakes","Soups"].includes(r.c));
+  const mains=all().filter(r=>["Chicken","Meat & Mince","Rice & One-Pot","Pasta & Bakes","Soups"].includes(r.c));
   const used=new Set(Object.values(plan).flat());
   DAYS.forEach(d=>{
     if((plan[d]||[]).length)return;
@@ -510,21 +644,21 @@ function openPick(day){
 function pickDay(recipeId){
   pickForRecipe=recipeId;pickTargetDay=null;
   const ps=$("#picksheet");
-  const r=R.find(x=>x.id===recipeId);
+  const r=byId(recipeId);
   ps.innerHTML=`<button class="x" data-closepick aria-label="Close">&times;</button>
     <span class="eyebrow">Week planner</span><h2 style="font-size:28px">Which day for ${esc(r.n)}?</h2>
     <div class="pick-list">${DAYS.map(d=>`<div class="pick-item" data-pickday="${d}"><span>${d}</span><span class="pc">${(plan[d]||[]).length?(plan[d].length+" dish"+(plan[d].length>1?"es":"")):"free"}</span></div>`).join("")}</div>`;
   $("#pickoverlay").classList.add("open");
 }
 function renderPickList(q){
-  const list=R.filter(r=>matches(r,q)).slice(0,60);
+  const list=all().filter(r=>matches(r,q)).slice(0,60);
   $("#picklist").innerHTML=list.map(r=>`<div class="pick-item" data-pick="${r.id}"><span>${esc(r.n)}</span><span class="pc">${esc(r.c)}</span></div>`).join("");
 }
 function closePick(){$("#pickoverlay").classList.remove("open")}
 $("#pickoverlay").addEventListener("click",e=>{
   if(e.target.id==="pickoverlay"||e.target.closest("[data-closepick]")){closePick();return}
   const pi=e.target.closest("[data-pick]");
-  if(pi){const id=+pi.dataset.pick;(plan[pickTargetDay]=plan[pickTargetDay]||[]).push(id);LS.set("plan",plan);renderWeek();closePick();toast(`Added to ${pickTargetDay}`);return}
+  if(pi){const id=pi.dataset.pick;(plan[pickTargetDay]=plan[pickTargetDay]||[]).push(id);LS.set("plan",plan);renderWeek();closePick();toast(`Added to ${pickTargetDay}`);return}
   const pd=e.target.closest("[data-pickday]");
   if(pd){const d=pd.dataset.pickday;(plan[d]=plan[d]||[]).push(pickForRecipe);LS.set("plan",plan);renderWeek();renderPlanBadge();closePick();closeSheet();toast(`Added to ${d}`)}
 });
@@ -558,7 +692,7 @@ function renderFridge(){
   $("#fchips").innerHTML=fridge.map((f,ix)=>`<span class="fchip">${esc(f)}<button data-rm="${ix}" aria-label="Remove ${esc(f)}">✕</button></span>`).join("");
   const note=$("#fnote"),grid=$("#fgrid");
   if(!fridge.length){note.textContent="";grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="big">What have you got?</div>Add a few things — chicken, cream, mushrooms — and the book will do the thinking.</div>`;return}
-  const scored=R.map(scoreRecipe).filter(Boolean).filter(s=>s.have.length>0).sort((a,b)=>b.score-a.score||b.have.length-a.have.length).slice(0,24);
+  const scored=all().map(scoreRecipe).filter(Boolean).filter(s=>s.have.length>0).sort((a,b)=>b.score-a.score||b.have.length-a.have.length).slice(0,24);
   note.textContent=scored.length?`Top matches for what you have — pantry basics are assumed.`:"No matches yet — add a main ingredient like chicken or mince.";
   grid.innerHTML=scored.map(s=>{
     const pct=Math.round(s.score*100);
@@ -574,7 +708,7 @@ $("#fchips").addEventListener("click",e=>{const b=e.target.closest("[data-rm]");
 function renderShop(){
   const wrap=$("#shoplist");
   const items=[];
-  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=R.find(x=>x.id===id);if(r)items.push({d,r})}));
+  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=byId(id);if(r)items.push({d,r})}));
   if(!items.length){wrap.innerHTML=`<div class="empty"><div class="big">The list writes itself</div>Plan a few dishes in the Week Planner and every ingredient lands here, grouped by dish.</div>`;return}
   wrap.innerHTML=items.map(({d,r})=>`<div class="shop-group"><h3>${esc(r.n)}</h3><p class="gsub">${d} · notebook ${esc(r.p)}</p>
     <ul class="ing">${r.i.map((it,ix)=>{const key=r.id+":"+ix;return `<li><input type="checkbox" data-tick="${key}" id="s${r.id}_${ix}" ${shopTicks.has(key)?"checked":""}><label for="s${r.id}_${ix}">${esc(it)}</label></li>`}).join("")}</ul></div>`).join("");
@@ -583,11 +717,266 @@ $("#shoplist").addEventListener("change",e=>{const t=e.target.closest("[data-tic
   t.checked?shopTicks.add(t.dataset.tick):shopTicks.delete(t.dataset.tick);LS.set("ticks",[...shopTicks])});
 $("#copyListBtn").addEventListener("click",()=>{
   const lines=[];
-  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=R.find(x=>x.id===id);if(!r)return;lines.push(`${d} — ${r.n}`);r.i.forEach(i=>lines.push("  • "+i));lines.push("")}));
+  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=byId(id);if(!r)return;lines.push(`${d} — ${r.n}`);r.i.forEach(i=>lines.push("  • "+i));lines.push("")}));
   if(!lines.length){toast("Plan some dishes first");return}
   navigator.clipboard.writeText(lines.join("\n")).then(()=>toast("Shopping list copied")).catch(()=>toast("Couldn't copy — long-press to select"));
 });
 
+/* ============ photos ============ */
+/* Thumbnails live in localStorage so cards paint instantly; full-size images go
+   to IndexedDB, which has far more room than localStorage's ~5MB. */
+let _db=null,_dbTried=false;
+function db(){
+  if(_db)return Promise.resolve(_db);
+  if(_dbTried)return Promise.resolve(null);
+  return new Promise(res=>{
+    try{
+      const rq=indexedDB.open("anuPhotos",1);
+      rq.onupgradeneeded=()=>{const d=rq.result;if(!d.objectStoreNames.contains("full"))d.createObjectStore("full",{keyPath:"id"})};
+      rq.onsuccess=()=>{_db=rq.result;_dbTried=true;res(_db)};
+      rq.onerror=()=>{_dbTried=true;res(null)};
+    }catch(e){_dbTried=true;res(null)}
+  });
+}
+function putFull(id,data){return db().then(d=>d&&new Promise(res=>{
+  try{const tx=d.transaction("full","readwrite");tx.objectStore("full").put({id,data});tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}
+}))}
+function getFull(id){return db().then(d=>d&&new Promise(res=>{
+  try{const rq=d.transaction("full","readonly").objectStore("full").get(id);rq.onsuccess=()=>res(rq.result?rq.result.data:null);rq.onerror=()=>res(null)}catch(e){res(null)}
+}))}
+function delFull(id){return db().then(d=>d&&new Promise(res=>{
+  try{const tx=d.transaction("full","readwrite");tx.objectStore("full").delete(id);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)}catch(e){res(false)}
+}))}
+
+function photosFor(id){return photos.filter(p=>p.r===id)}
+function savePhotos(){return LS.set("photos",photos)}
+
+/* draw the picture onto a canvas at a sane size, so a 5MB phone photo becomes ~90KB */
+function resize(file,max,q){
+  return new Promise((res,rej)=>{
+    const paint=img=>{
+      const scale=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+      const cv=document.createElement("canvas");cv.width=w;cv.height=h;
+      const cx=cv.getContext("2d");cx.fillStyle="#fff";cx.fillRect(0,0,w,h);cx.drawImage(img,0,0,w,h);
+      try{res(cv.toDataURL("image/jpeg",q))}catch(e){rej(e)}
+      if(img.close)img.close();
+    };
+    const viaImg=()=>{
+      const fr=new FileReader();
+      fr.onload=()=>{const im=new Image();im.onload=()=>paint(im);im.onerror=()=>rej(new Error("unreadable image"));im.src=fr.result};
+      fr.onerror=()=>rej(new Error("could not read file"));
+      fr.readAsDataURL(file);
+    };
+    if(window.createImageBitmap){
+      /* honours the phone's rotation flag so portrait shots aren't sideways */
+      createImageBitmap(file,{imageOrientation:"from-image"}).then(paint).catch(viaImg);
+    }else viaImg();
+  });
+}
+async function addPhotos(recipeId,files){
+  const added=[];
+  for(const f of files){
+    if(!f||!f.type||f.type.indexOf("image/")!==0)continue;
+    try{
+      const t=await resize(f,420,.72), full=await resize(f,1400,.82);
+      const pid="p"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+      await putFull(pid,full);
+      added.push({id:pid,r:recipeId,t,ts:Date.now()});
+    }catch(e){}
+  }
+  if(!added.length)return 0;
+  const before=photos;
+  photos=photos.concat(added);
+  if(!savePhotos()){
+    photos=before;added.forEach(a=>delFull(a.id));
+    toast("No room left for more photos — remove a few first");
+    return 0;
+  }
+  return added.length;
+}
+async function removePhoto(pid){
+  photos=photos.filter(p=>p.id!==pid);
+  savePhotos();await delFull(pid);
+}
+let photoTarget=null;
+function pickPhotoFor(recipeId){photoTarget=recipeId;$("#photoFile").value="";$("#photoFile").click()}
+$("#photoFile").addEventListener("change",async e=>{
+  const files=[...e.target.files];if(!files.length||!photoTarget)return;
+  toast(files.length>1?`Adding ${files.length} photos…`:"Adding photo…");
+  const n=await addPhotos(photoTarget,files);
+  if(n){
+    toast(n>1?`${n} photos added`:"Photo added");
+    refreshSheetShots();renderFormShots();renderGrid();renderFridge();
+  }
+  e.target.value="";
+});
+/* enlarge a photo: thumbnail shows instantly, full-size swaps in when it loads */
+function openLightbox(pid){
+  const p=photos.find(x=>x.id===pid);if(!p)return;
+  const img=$("#lightboxImg");img.src=p.t;
+  $("#lightbox").classList.add("open");
+  getFull(pid).then(full=>{if(full&&$("#lightbox").classList.contains("open"))img.src=full});
+}
+$("#lightbox").addEventListener("click",()=>$("#lightbox").classList.remove("open"));
+
+/* ============ add / edit a recipe ============ */
+let draftId=null;
+function newDraftId(){return "c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function saveCustom(){
+  if(LS.set("custom",custom))return true;
+  toast("Storage is full — remove a photo or two and try again");
+  return false;
+}
+function renderFormShots(){
+  if(!draftId)return;
+  const ps=photosFor(draftId);
+  $("#formShots").innerHTML=ps.map(p=>`<div class="shot-tile" data-shot="${p.id}"><img src="${p.t}" alt="Photo of this dish"><button type="button" class="rm" data-rmshot="${p.id}" aria-label="Remove photo">&times;</button></div>`).join("")
+    +`<button type="button" class="addshot" data-addshot><b>+</b>${ps.length?"Another photo":"Add a photo"}</button>`;
+}
+$("#formShots").addEventListener("click",e=>{
+  const rm=e.target.closest("[data-rmshot]");
+  if(rm){removePhoto(rm.dataset.rmshot).then(()=>{renderFormShots();renderGrid()});return}
+  if(e.target.closest("[data-addshot]")){pickPhotoFor(draftId);return}
+  const tile=e.target.closest("[data-shot]");
+  if(tile)openLightbox(tile.dataset.shot);
+});
+function fillCats(sel){
+  const list=cats().sort((a,b)=>a.localeCompare(b));
+  $("#fCat").innerHTML=list.map(c=>`<option${c===sel?" selected":""}>${esc(c)}</option>`).join("")
+    +`<option value="__new"${sel==="__new"?" selected":""}>+ a new category…</option>`;
+  $("#newCatWrap").hidden=$("#fCat").value!=="__new";
+}
+$("#fCat").addEventListener("change",()=>{
+  $("#newCatWrap").hidden=$("#fCat").value!=="__new";
+  if($("#fCat").value==="__new")$("#fNewCat").focus();
+});
+function resetForm(){
+  draftId=newDraftId();
+  $("#formTitle").textContent="Write a new page";
+  $("#formSub").textContent="Add your own recipe to the book — a family favourite, something you’ve adapted, or a dish you want to remember. It joins the search, the planner and the fridge matcher like any other recipe.";
+  $("#fName").value="";$("#fSrc").value="";$("#fTags").value="";$("#fIng").value="";$("#fMeth").value="";$("#fNewCat").value="";
+  fillCats("Chicken");
+  $("#saveBtn").textContent="Save to the book";
+  $("#deleteBtn").hidden=true;
+  renderFormShots();
+}
+function loadForm(id){
+  const r=byId(id);if(!r||!r.own)return;
+  draftId=r.id;
+  $("#formTitle").textContent="Edit your recipe";
+  $("#formSub").textContent="Change anything you like — the recipe updates everywhere it appears.";
+  $("#fName").value=r.n;$("#fSrc").value=r.s||"";$("#fTags").value=(r.t||[]).join(", ");
+  $("#fIng").value=r.i.join("\n");$("#fMeth").value=r.m.join("\n");$("#fNewCat").value="";
+  fillCats(r.c);
+  $("#saveBtn").textContent="Save changes";
+  $("#deleteBtn").hidden=false;
+  renderFormShots();
+}
+$("#resetBtn").addEventListener("click",()=>{
+  const ps=photosFor(draftId);
+  if(ps.length&&!confirm("Clear the form? Photos you added to it will be removed too."))return;
+  Promise.all(ps.map(p=>removePhoto(p.id))).then(()=>{resetForm();toast("Form cleared")});
+});
+$("#deleteBtn").addEventListener("click",async()=>{
+  const r=byId(draftId);if(!r)return;
+  if(!confirm(`Delete “${r.n}”? This can’t be undone.`))return;
+  for(const p of photosFor(draftId))await removePhoto(p.id);
+  custom=custom.filter(c=>c.id!==draftId);saveCustom();
+  favs.delete(draftId);LS.set("favs",[...favs]);
+  Object.keys(plan).forEach(d=>{plan[d]=plan[d].filter(x=>x!==draftId);if(!plan[d].length)delete plan[d]});
+  LS.set("plan",plan);
+  if(curCat==="✎ Yours"&&!custom.length)curCat="All";
+  resetForm();refreshCount();renderChips();renderGrid();renderWeek();renderFridge();
+  toast("Recipe deleted");
+});
+$("#recipeForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("#fName").value.trim();
+  let cat=$("#fCat").value;
+  if(cat==="__new")cat=$("#fNewCat").value.trim()||"My Recipes";
+  const ing=$("#fIng").value.split("\n").map(s=>s.trim()).filter(Boolean);
+  /* strip any "1." or "2)" the cook typed — the page numbers the steps itself */
+  const meth=$("#fMeth").value.split("\n").map(s=>s.replace(/^\s*\d+\s*[.)]\s*/,"").trim()).filter(Boolean);
+  if(!name){toast("Give the recipe a name");$("#fName").focus();return}
+  if(!ing.length){toast("Add at least one ingredient");$("#fIng").focus();return}
+  if(!meth.length){toast("Add at least one method step");$("#fMeth").focus();return}
+  const existing=custom.find(c=>c.id===draftId);
+  const rec={id:draftId,n:name,c:cat,t:$("#fTags").value.split(",").map(s=>s.trim()).filter(Boolean),
+             i:ing,m:meth,own:true,p:"yours",ts:existing?existing.ts:Date.now()};
+  const src=$("#fSrc").value.trim();if(src)rec.s=src;
+  if(existing)Object.assign(existing,rec);else custom.unshift(rec);
+  if(!saveCustom()){if(!existing)custom=custom.filter(c=>c.id!==draftId);return}
+  const savedId=draftId;
+  refreshCount();renderChips();renderGrid();renderWeek();renderFridge();
+  toast(existing?"Recipe updated":"Added to the book");
+  resetForm();goTab("recipes");openSheet(savedId);
+});
+
+/* ============ backup & restore ============ */
+async function buildBackup(){
+  const out={app:"anu-recipe-book",version:1,exported:new Date().toISOString(),
+             custom,favs:[...favs],plan,fridge,photos:[]};
+  for(const p of photos)out.photos.push({id:p.id,r:p.r,t:p.t,ts:p.ts,full:await getFull(p.id)});
+  return JSON.stringify(out);
+}
+$("#exportBtn").addEventListener("click",async()=>{
+  toast("Building your backup…");
+  const json=await buildBackup();
+  try{
+    const url=URL.createObjectURL(new Blob([json],{type:"application/json"}));
+    const a=document.createElement("a");
+    a.href=url;a.download="anu-recipe-book-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    toast("Backup downloaded");
+  }catch(e){toast("Download blocked here — use “Copy as text” instead")}
+});
+$("#copyBackupBtn").addEventListener("click",async()=>{
+  toast("Building your backup…");
+  const json=await buildBackup();
+  try{await navigator.clipboard.writeText(json);toast("Backup copied — paste it somewhere safe")}
+  catch(e){toast("Couldn’t copy — try “Download backup”")}
+});
+$("#importBtn").addEventListener("click",()=>{$("#importFile").value="";$("#importFile").click()});
+$("#importFile").addEventListener("change",e=>{
+  const f=e.target.files[0];if(!f)return;
+  const fr=new FileReader();
+  fr.onload=()=>{applyBackup(fr.result);e.target.value=""};
+  fr.onerror=()=>toast("Couldn’t read that file");
+  fr.readAsText(f);
+});
+async function applyBackup(text){
+  let d;
+  try{d=JSON.parse(text)}catch(err){toast("That file isn’t a recipe book backup");return}
+  if(!d||d.app!=="anu-recipe-book"){toast("That file isn’t a recipe book backup");return}
+  let addedR=0,addedP=0;
+  (d.custom||[]).forEach(r=>{
+    if(!r||!r.id||!r.n||!r.i||!r.m)return;
+    if(custom.some(c=>c.id===r.id))return;
+    r.own=true;r.p=r.p||"yours";custom.unshift(r);addedR++;
+  });
+  for(const p of (d.photos||[])){
+    if(!p||!p.id||photos.some(x=>x.id===p.id))continue;
+    if(p.full)await putFull(p.id,p.full);
+    photos.push({id:p.id,r:p.r,t:p.t||p.full,ts:p.ts||Date.now()});addedP++;
+  }
+  (d.favs||[]).forEach(f=>favs.add(mid(f)));
+  (d.fridge||[]).forEach(x=>{if(!fridge.includes(x))fridge.push(x)});
+  Object.keys(d.plan||{}).forEach(day=>{
+    if(!plan[day]||!plan[day].length)plan[day]=(d.plan[day]||[]).map(mid);
+  });
+  const ok=saveCustom()&&savePhotos();
+  LS.set("favs",[...favs]);LS.set("fridge",fridge);LS.set("plan",plan);
+  refreshCount();renderChips();renderGrid();renderWeek();renderFridge();renderFormShots();
+  toast(ok?`Restored ${addedR} recipe${addedR===1?"":"s"} and ${addedP} photo${addedP===1?"":"s"}`
+          :"Restored, but storage is nearly full");
+}
+
 /* ============ init ============ */
+/* drop photos whose recipe was never saved (a form abandoned mid-edit) */
+const orphans=photos.filter(p=>p.r&&p.r[0]==="c"&&!custom.some(c=>c.id===p.r));
+if(orphans.length){photos=photos.filter(p=>orphans.indexOf(p)<0);savePhotos();orphans.forEach(p=>delFull(p.id))}
+resetForm();
 renderChips();renderGrid();renderWeek();renderFridge();
 </script>

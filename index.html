@@ -920,17 +920,33 @@ async function buildBackup(){
   for(const p of photos)out.photos.push({id:p.id,r:p.r,t:p.t,ts:p.ts,full:await getFull(p.id)});
   return JSON.stringify(out);
 }
+/* A plain download link does nothing inside the claude.ai artifact viewer; it
+   hands pages a save API instead. On GitHub Pages and the offline copy there
+   is no such API and the ordinary download works. Take whichever this view has. */
+const downloadsReady=(window.claude&&typeof window.claude.use==="function")
+  ? window.claude.use("downloads").catch(()=>null)
+  : Promise.resolve(null);
+async function offerFile(filename,text){
+  const saver=await downloadsReady;
+  if(saver){
+    try{await saver.save({filename,data:text});return "saved"}
+    catch(e){return (e&&e.code==="declined")?"declined":"failed"}
+  }
+  try{
+    const url=URL.createObjectURL(new Blob([text],{type:"application/json"}));
+    const a=document.createElement("a");
+    a.href=url;a.download=filename;
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    return "saved";
+  }catch(e){return "failed"}
+}
 $("#exportBtn").addEventListener("click",async()=>{
   toast("Building your backup…");
   const json=await buildBackup();
-  try{
-    const url=URL.createObjectURL(new Blob([json],{type:"application/json"}));
-    const a=document.createElement("a");
-    a.href=url;a.download="anu-recipe-book-backup-"+new Date().toISOString().slice(0,10)+".json";
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-    toast("Backup downloaded");
-  }catch(e){toast("Download blocked here — use “Copy as text” instead")}
+  const name="anu-recipe-book-backup-"+new Date().toISOString().slice(0,10)+".json";
+  const how=await offerFile(name,json);
+  toast(how==="saved"?"Backup saved":how==="declined"?"Download cancelled":"Couldn’t save here — use “Copy as text” instead");
 });
 $("#copyBackupBtn").addEventListener("click",async()=>{
   toast("Building your backup…");

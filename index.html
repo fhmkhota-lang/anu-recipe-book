@@ -171,6 +171,48 @@ input{font-family:var(--ui)}
 .backup{background:var(--wash);border-radius:14px;padding:16px 18px 18px;margin-top:22px;max-width:760px}
 .backup h3{font-family:var(--display);font-weight:500;font-size:20px;margin:0 0 4px}
 .backup p{font-family:var(--ui);font-size:13px;color:var(--ink-soft);margin:0 0 12px;max-width:64ch;line-height:1.5}
+/* Gluten free */
+.gfbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--leaf-wash);border:1px solid var(--leaf);border-radius:14px;padding:11px 16px;margin:0 0 14px}
+.gfbar .lbl{font-family:var(--ui);font-size:13.5px;font-weight:600;color:var(--leaf);flex:1;min-width:200px}
+.gfbar .lbl small{display:block;font-weight:400;opacity:.85;font-size:12.5px;margin-top:1px}
+.switch{position:relative;display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-family:var(--ui);font-size:13px;font-weight:700;color:var(--leaf);white-space:nowrap}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch .track{width:42px;height:24px;border-radius:999px;background:var(--line);transition:background .18s;flex:0 0 auto;position:relative}
+.switch .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:var(--card);transition:transform .18s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.switch input:checked + .track{background:var(--leaf)}
+.switch input:checked + .track::after{transform:translateX(18px)}
+.switch input:focus-visible + .track{outline:2px solid var(--saffron);outline-offset:2px}
+.gfpill{display:inline-block;font-family:var(--ui);font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;border-radius:999px;padding:2px 7px;vertical-align:2px;margin-left:7px}
+.gfpill.free{background:var(--leaf-wash);color:var(--leaf)}
+.gfpill.swap{background:var(--saffron-wash);color:var(--saffron-deep)}
+.gfpill.bake{background:var(--wash);color:var(--ink-soft)}
+.ing li.sw label{color:var(--leaf)}
+.ing li.sw .was{display:block;font-size:12.5px;color:var(--ink-soft);text-decoration:line-through;opacity:.8}
+.gfnote{background:var(--leaf-wash);border-left:3px solid var(--leaf);border-radius:0 10px 10px 0;padding:11px 14px;font-size:14.5px;margin-top:14px}
+.gfnote b{font-family:var(--ui);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--leaf);display:block;margin-bottom:5px}
+.gfnote ul{margin:0;padding-left:18px}
+.gfnote li{margin:3px 0}
+.gfcheck{background:var(--saffron-wash);border-left:3px solid var(--saffron);border-radius:0 10px 10px 0;padding:11px 14px;font-size:14px;margin-top:10px}
+.gfcheck b{font-family:var(--ui);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--saffron-deep);display:block;margin-bottom:5px}
+.gfcheck ul{margin:0;padding-left:18px}
+/* Import from a link */
+.import-box{background:var(--wash);border:1px solid var(--line);border-radius:14px;padding:16px 18px 18px;margin-bottom:20px}
+.import-box h3{font-family:var(--display);font-weight:500;font-size:21px;margin:0 0 3px}
+.import-box p{font-family:var(--ui);font-size:12.5px;color:var(--ink-soft);margin:0 0 12px;max-width:66ch;line-height:1.5}
+.import-row{display:flex;gap:8px;flex-wrap:wrap}
+.import-row input{flex:1;min-width:220px;padding:11px 16px;font-size:15px;font-family:var(--ui);border:1.5px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink)}
+.import-row input:focus{border-color:var(--saffron);outline:none}
+.import-status{font-family:var(--ui);font-size:13px;margin-top:11px;display:none;line-height:1.5}
+.import-status.on{display:block}
+.import-status.work{color:var(--ink-soft)}
+.import-status.good{color:var(--leaf)}
+.import-status.bad{color:var(--chilli)}
+.paste-wrap{margin-top:12px;display:none}
+.paste-wrap.on{display:block}
+.paste-wrap textarea{width:100%;min-height:150px;font-family:var(--body);font-size:14.5px;line-height:1.5;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;resize:vertical}
+.paste-wrap textarea:focus{border-color:var(--saffron);outline:none}
+.linkish{background:none;border:none;color:var(--saffron-deep);font-family:var(--ui);font-size:12.5px;font-weight:600;text-decoration:underline;padding:4px 0;cursor:pointer}
+.linkish:hover{color:var(--ink)}
 @media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
 @media (max-width:560px){.masthead{padding-top:30px}.sheet{padding:24px 18px 30px}.row2{grid-template-columns:1fr;gap:0}}
 </style>
@@ -192,6 +234,11 @@ input{font-family:var(--ui)}
     <div class="searchbar">
       <input id="q" type="search" placeholder="Search recipes, ingredients&hellip; try &ldquo;chicken&rdquo; or &ldquo;coconut&rdquo;" autocomplete="off">
       <button class="btn" id="luckyBtn" title="Pick a random recipe">Surprise me</button>
+    </div>
+    <div class="gfbar">
+      <span class="lbl">Cooking gluten free?
+        <small id="gfSummary"></small></span>
+      <label class="switch"><input type="checkbox" id="gfToggle"><span class="track"></span>Show gluten-free versions</label>
     </div>
     <div class="chips" id="catchips"></div>
     <p class="result-note" id="rnote"></p>
@@ -237,6 +284,20 @@ input{font-family:var(--ui)}
   <section class="view" id="v-add">
     <div class="plan-head"><h2 id="formTitle">Write a new page</h2></div>
     <p class="plan-sub" id="formSub">Add your own recipe to the book &mdash; a family favourite, something you&rsquo;ve adapted, or a dish you want to remember. It joins the search, the planner and the fridge matcher like any other recipe.</p>
+    <div class="import-box">
+      <h3>Start from a link</h3>
+      <p>Paste a recipe page, blog post, or video link and the book will try to pull the ingredients and method out of it. Fill in anything it misses before you save &mdash; nothing is saved until you do. Pages are fetched through a public reader service, so only paste links you are happy to send on.</p>
+      <div class="import-row">
+        <input id="impUrl" type="url" placeholder="https://&hellip; a recipe page, blog post or video" autocomplete="off" spellcheck="false">
+        <button type="button" class="btn primary" id="impBtn">Get the recipe</button>
+      </div>
+      <p class="import-status" id="impStatus"></p>
+      <button type="button" class="linkish" id="pasteToggle">Or paste the recipe text yourself</button>
+      <div class="paste-wrap" id="pasteWrap">
+        <textarea id="impText" placeholder="Paste the whole recipe here &mdash; title, ingredients and method. Works for a video caption or a screenshot you have typed out."></textarea>
+        <div style="margin-top:9px"><button type="button" class="btn" id="impTextBtn">Read this text</button></div>
+      </div>
+    </div>
     <form class="form" id="recipeForm" novalidate>
       <div class="field">
         <label>Photos <span class="hint">optional &mdash; a picture of the finished dish</span></label>
@@ -478,6 +539,146 @@ function countText(){const n=custom.length;return R.length+(n?` + ${n} of your o
 function refreshCount(){document.getElementById("rcount").textContent=countText()}
 refreshCount();
 
+/* ============ gluten free ============ */
+/* The same rules run over the notebook recipes, the ones you add, and anything
+   imported from a link — so every recipe in the book has a gluten-free version. */
+const GF_RULES=[
+  {re:/\b(Tasty Wheat|Taystee Wheat)\b/i,to:"fine polenta (mealie meal)",bake:1,
+   note:"Polenta stands in for semolina here but drinks a little more liquid — add 2–3 tbsp extra milk and let it stand 10 minutes before cooking."},
+  {re:/\bnutty wheat\b/i,to:"buckwheat flour",bake:1},
+  {re:/\bground oats\b/i,to:"certified gluten-free oat flour",bake:1,
+   note:"Ordinary oats are milled alongside wheat — only oats marked gluten free are safe."},
+  {re:/\boats\b/i,to:"certified gluten-free oats"},
+  {re:/\bbread flour\b/i,to:"gluten-free bread flour blend (+1 tsp xanthan gum per cup)",bake:1},
+  {re:/\bself-raising flour\b/i,to:"gluten-free self-raising blend",bake:1},
+  {re:/\bcake flour\b/i,to:"gluten-free cake flour blend",bake:1},
+  {re:/\bdhana flour\b/i,to:null},
+  {re:/\bbhajia mix\b/i,to:"chickpea (gram) flour with a pinch of bicarb — most bhajia mixes are gram flour, but check the packet"},
+  {re:/Hinds Southern Fried \(hot\)/i,to:"a gluten-free Southern-Fried-style coating (rice flour, maizena, paprika, chilli, salt)"},
+  {re:/\b(cornflour|cornstarch|maizena|mazeina|maziena)\b/i,to:null},
+  {re:/\bgram flour\b/i,to:null},
+  {re:/\bflour\b/i,to:"gluten-free plain flour blend",bake:1},
+  {re:/Kellogg's crumbs/i,to:"gluten-free breadcrumbs (or crushed gluten-free cornflakes)"},
+  {re:/\bbreadcrumbs?\b/i,to:"gluten-free breadcrumbs"},
+  {re:/\bslices? bread, grated\b/i,to:m=>m.replace(/bread/i,"gluten-free bread")},
+  {re:/\bslices? bread\b/i,to:m=>m.replace(/bread/i,"gluten-free bread")+" (or 3 tbsp gram flour)"},
+  {re:/^Bread and cheese, to serve$/i,to:"Gluten-free bread and cheese, to serve"},
+  {re:/^Bread$/i,to:"Gluten-free bread"},
+  {re:/\bcroissants\b/i,to:"gluten-free croissants or gluten-free brioche rolls"},
+  {re:/\bcannelloni tubes\b/i,to:"gluten-free cannelloni tubes (or rolled gluten-free lasagne sheets)"},
+  {re:/\bpasta screws\b/i,to:"gluten-free pasta screws"},
+  {re:/1 tin spaghetti in tomato sauce/i,to:"1 tin gluten-free spaghetti in tomato sauce (or 150 g cooked gluten-free spaghetti + 1/2 cup tomato sauce)"},
+  {re:/2-minute noodles/i,to:"rice noodles (or gluten-free instant noodles)"},
+  {re:/\bnoodles\b/i,to:"rice noodles"},
+  {re:/\bspaghetti\b/i,to:"gluten-free spaghetti"},
+  {re:/\b(macaroni|lasagne|penne|tagliatelle|couscous|bulgur|orzo)\b/i,to:m=>"gluten-free "+m.toLowerCase()},
+  {re:/\bpasta\b/i,to:"gluten-free pasta"},
+  {re:/fried puri with salt and chilli/i,to:"fried puri made the gluten-free way (see Ma's Puri), with salt and chilli"},
+  {re:/\bcornflakes\b/i,to:"certified gluten-free cornflakes (many contain barley malt)"},
+  {re:/\bweet-?bix\b|\bbran flakes\b|\bmuesli\b/i,to:m=>"certified gluten-free "+m.toLowerCase()},
+  {re:/Tennis biscuits/i,to:"gluten-free coconut biscuits"},
+  {re:/\b(biscuits?|digestives?)\b(?=.*crushed)/i,to:m=>"gluten-free "+m.toLowerCase()},
+  {re:/Kit ?Kats/i,to:"gluten-free chocolate bars"},
+  {re:/\bAstros\b/i,to:"gluten-free sweets"},
+  {re:/whole nut slab/i,to:"gluten-free whole-nut chocolate slab"},
+  {re:/Dairy Milk/i,to:"gluten-free milk chocolate"},
+  {re:/\b(pita|wrap|tortilla|baguette|ciabatta|bun|roll)s?\b/i,to:m=>"gluten-free "+m.toLowerCase()},
+  {re:/\bsoy sauce\b|\bsoya sauce\b/i,to:"tamari (gluten-free soy sauce)"},
+  {re:/\bbeer\b|\bale\b|\bstout\b/i,to:"gluten-free beer (or stock)"}
+];
+const GF_WATCH=[
+  {re:/worcester/i,c:"Worcester sauce often uses malt vinegar — look for a gluten-free one."},
+  {re:/oyster sauce/i,c:"Oyster sauce usually contains wheat — check the label."},
+  {re:/knorr|stock pot|onion soup|cream of chicken|mushroom soup|stock cube|\bbroth\b/i,c:"Packet soups and stock cubes are usually thickened with wheat — use gluten-free stock."},
+  {re:/baking powder/i,c:"Most baking powder is maize-based, but a few use wheat starch — check the tin."},
+  {re:/\baromat\b/i,c:"Check the Aromat label; some seasoning salts carry wheat."},
+  {re:/\bmasala\b|curry powder|achaar|gorimas|chohans|methi masala|\bhing\b|asafoetida/i,c:"Shop masalas are usually pure spice, but blends containing hing (asafoetida) are often bulked with wheat flour — check."},
+  {re:/steers|nandos|peri|mrs ball|chutney|picallili|sweet chilli|tikka|bushveld|calistos|prego/i,c:"Bottled sauces and chutneys vary a lot — check each label."},
+  {re:/custard powder/i,c:"Custard powder is normally maize starch, but check."},
+  {re:/\bmilo\b/i,c:"Milo contains barley malt — use cocoa plus a little extra sugar, or a gluten-free malt drink."},
+  {re:/liquid glucose/i,c:"Glucose syrup can be wheat-derived; most is safe, but check."},
+  {re:/\bmayo|mayonnaise/i,c:"Most mayonnaise is gluten free — check if it is a salad dressing rather than true mayo."},
+  {re:/\bsoy ?a? sauce\b|tamari/i,c:"Ordinary soy sauce is brewed with wheat; tamari is the gluten-free one."}
+];
+function gfTech(r,bake,any){
+  /* bread/cake/biscuit advice only matters when flour was swapped; the frying
+     and thickening notes matter for any swap (a crumb change, say). */
+  const n=[];if(!any)return n;
+  const name=(r.n||"").toLowerCase(),cat=r.c||"";
+  const txt=((r.m||[]).join(" ")+" "+(r.i||[]).join(" ")).toLowerCase();
+  const isBread=/naan|puri|roti|dough|khaliat|pizza|maska|dhaltera|bread/.test(name)||cat==="Breads & Doughs";
+  const isCake=/cake|loaf|muffin|pudding|malva|basbousa|lagan|traybake|scone|crumpet|pancake|waffle|eclair|sojee/.test(name);
+  const isBiscuit=cat==="Biscuits & Cookies"||/biscuit|cookie|shortbread|hertzoggie|alfajor|square|slice/.test(name);
+  const isCoat=/coat in flour|breadcrumb|crumb|deep fry|shallow fry/.test(txt)&&!isCake&&!isBiscuit&&!isBread;
+  const isRoux=/whisk in the flour|thicken|white sauce|stir continuously until thick/.test(txt);
+  if(bake&&isBread){
+    n.push("There is no gluten to develop, so skip the long knead — mix until smooth and stop. The dough will be softer and stickier than Anu's; wet your hands to shape it rather than adding more flour.");
+    n.push("Give it one rise rather than two — gluten-free doughs collapse if they over-prove.");
+  }else if(bake&&isCake){
+    n.push("Let the batter stand 15 minutes before it goes in the oven so the starches hydrate — that is what stops a gluten-free crumb feeling gritty.");
+    n.push("Same temperature, but start checking 5 minutes early, and leave it in the tin until completely cool or it will crack.");
+  }else if(bake&&isBiscuit){
+    n.push("Chill the dough at least an hour — gluten-free biscuit dough is much softer and spreads if it goes in warm.");
+    n.push("They firm up as they cool, so take them out when the edges are set even if the middles still look underdone.");
+  }
+  if(isCoat)n.push("Rice flour and maizena crisp harder than breadcrumbs — drop the oil temperature slightly so they do not catch.");
+  if(isRoux)n.push("Maizena thickens at a lower temperature than flour: slake it in cold liquid first, then bring it just to a boil.");
+  return n;
+}
+const _gfCache=new Map();
+function gfInfo(r){
+  if(_gfCache.has(r.id))return _gfCache.get(r.id);
+  const swaps={},checks=[],notes=[];let bake=false;
+  (r.i||[]).forEach((line,li)=>{
+    /* every matching rule fires, not just the first — one line can hold two
+       gluten items. Replacement text is parked so a later rule cannot rewrite it. */
+    let work=line;const parked=[];let hit=false;
+    for(const rule of GF_RULES){
+      if(!rule.re.test(work))continue;
+      if(rule.to===null){ work=work.replace(rule.re,m=>{parked.push(m);return "\u0000"+(parked.length-1)+"\u0000"}); continue; }
+      work=work.replace(rule.re,m=>{
+        parked.push(typeof rule.to==="function"?rule.to(m):m.replace(rule.re,rule.to));
+        return "\u0000"+(parked.length-1)+"\u0000";
+      });
+      hit=true;
+      if(rule.bake)bake=true;
+      if(rule.note&&notes.indexOf(rule.note)<0)notes.push(rule.note);
+    }
+    if(hit){
+      let rep=work.replace(/\u0000(\d+)\u0000/g,(_,k)=>parked[+k]);
+      if(/^[A-Z]/.test(line)&&/^[a-z]/.test(rep))rep=rep[0].toUpperCase()+rep.slice(1);
+      if(rep!==line)swaps[li]=rep;
+    }
+    GF_WATCH.forEach(x=>{if(x.re.test(line)&&checks.indexOf(x.c)<0)checks.push(x.c)});
+  });
+  const nSwaps=Object.keys(swaps).length;
+  const all=notes.concat(gfTech(r,bake,nSwaps>0));
+  /* only call it "with changes" when there are changes to describe */
+  const info={s:nSwaps===0?"free":(all.length?"bake":"swap"),w:swaps,n:all,c:checks,count:nSwaps};
+  _gfCache.set(r.id,info);
+  return info;
+}
+const GF_LABEL={free:"already gluten free",swap:"gluten free with swaps",bake:"gluten free with changes"};
+let gfMode=LS.get("gf",false);
+/* ingredient lines, gluten-free or as Anu wrote them */
+function ingLines(r,gf){
+  const w=gf?gfInfo(r).w:{};
+  return (r.i||[]).map((line,ix)=>w[ix]?{text:w[ix],was:line}:{text:line,was:null});
+}
+function renderGfBar(){
+  const list=all();
+  const free=list.filter(r=>gfInfo(r).s==="free").length;
+  document.getElementById("gfToggle").checked=gfMode;
+  document.getElementById("gfSummary").textContent=
+    `${free} of the ${list.length} recipes need nothing changed. The rest show you exactly what to swap.`;
+}
+document.getElementById("gfToggle").addEventListener("change",e=>{
+  gfMode=e.target.checked;LS.set("gf",gfMode);
+  renderChips();renderGrid();renderFridge();renderShop();
+  if(sheetId)openSheet(sheetId);
+  toast(gfMode?"Showing gluten-free versions":"Showing the recipes as written");
+});
+
 /* ============ toast ============ */
 let toastT;function toast(msg){const t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),2200)}
 
@@ -501,8 +702,8 @@ function cardHTML(r,extra){
   return `<article class="card" data-id="${r.id}" tabindex="0" role="button" aria-label="${esc(r.n)}">
     ${shot?`<div class="shot"><img src="${shot.t}" alt="" loading="lazy"></div>`:""}
     <span class="eyebrow">${esc(r.c)}</span>
-    <h3>${esc(r.n)}${r.own?'<span class="own-badge">yours</span>':""}</h3>
-    <p class="prev">${esc(r.i.slice(0,4).join(" · "))}</p>
+    <h3>${esc(r.n)}${r.own?'<span class="own-badge">yours</span>':""}${gfMode?`<span class="gfpill ${gfInfo(r).s}">${GF_LABEL[gfInfo(r).s]}</span>`:""}</h3>
+    <p class="prev">${esc(ingLines(r,gfMode).slice(0,4).map(x=>x.text).join(" · "))}</p>
     ${extra||""}
     <div class="foot"><span class="pg">${r.own?"your recipe":"notebook "+esc(r.p)}</span>
     <button class="heart ${favs.has(r.id)?"on":""}" data-fav="${r.id}" aria-label="favourite" title="Favourite">&#10084;</button></div>
@@ -514,12 +715,12 @@ function matches(r,q){
 }
 function renderGrid(){
   const grid=$("#grid");
-  let list=all().filter(r=>(curCat==="All"||(curCat==="♥ Favourites"?favs.has(r.id):curCat==="✎ Yours"?r.own:r.c===curCat))&&matches(r,curQ));
+  let list=all().filter(r=>(curCat==="All"||(curCat==="♥ Favourites"?favs.has(r.id):curCat==="✎ Yours"?r.own:curCat==="✓ Gluten free as-is"?gfInfo(r).s==="free":r.c===curCat))&&matches(r,curQ));
   $("#rnote").textContent=list.length?`${list.length} recipe${list.length===1?"":"s"}${curQ?` for “${curQ}”`:""}${curCat!=="All"?` in ${curCat}`:""}`:"";
   grid.innerHTML=list.length?list.map(r=>cardHTML(r)).join(""):`<div class="empty" style="grid-column:1/-1"><div class="big">Nothing in the pot</div>${curCat==="✎ Yours"?"You haven’t added a recipe yet — open “Add a Recipe” to write your first one.":"Try another word — maybe “chicken”, “kebab” or “coconut”."}</div>`;
 }
 function renderChips(){
-  const chips=["All","♥ Favourites",...(custom.length?["✎ Yours"]:[]),...cats()];
+  const chips=["All","♥ Favourites",...(custom.length?["✎ Yours"]:[]),...(gfMode?["✓ Gluten free as-is"]:[]),...cats()];
   $("#catchips").innerHTML=chips.map(c=>`<button class="chip ${c===curCat?"on":""}" data-cat="${esc(c)}">${esc(c)}</button>`).join("");
 }
 $("#catchips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;curCat=b.dataset.cat;renderChips();renderGrid()});
@@ -543,9 +744,11 @@ function sheetShotsHTML(id){
   return `<div class="photo-strip">${ps.map(p=>`<div class="shot-tile" data-shot="${p.id}"><img src="${p.t}" alt="Photo of this dish"><button class="rm" data-rmshot="${p.id}" aria-label="Remove photo" title="Remove photo">&times;</button></div>`).join("")}
     <button type="button" class="addshot" data-addshot><b>+</b>${ps.length?"Another photo":"Add a photo"}</button></div>`;
 }
-function openSheet(id){
+function openSheet(id,forceGf){
   const r=byId(id);if(!r)return;
   sheetId=id;
+  const gi=gfInfo(r);
+  const showGf=(forceGf===undefined?gfMode:forceGf)&&gi.count>0;
   const sh=$("#sheet");
   const src=r.own
     ? `your recipe${r.s?" · "+esc(r.s):""}${r.ts?" · added "+new Date(r.ts).toLocaleDateString(undefined,{day:"numeric",month:"long",year:"numeric"}):""}`
@@ -561,8 +764,12 @@ function openSheet(id){
       <button class="btn" data-plandish>+ Add to week planner</button>
       ${r.own?'<button class="btn" data-editdish>Edit recipe</button>':""}
     </div>
-    <h4>Ingredients</h4>
-    <ul class="ing">${r.i.map((it,ix)=>`<li><input type="checkbox" id="ing${ix}"><label for="ing${ix}">${esc(it)}</label></li>`).join("")}</ul>
+    <h4>Ingredients${gi.count?` <span class="gfpill ${gi.s}" style="margin-left:4px">${GF_LABEL[gi.s]}</span>`:""}</h4>
+    ${gi.count?`<label class="switch" style="margin:2px 0 10px"><input type="checkbox" id="sheetGf" ${showGf?"checked":""}><span class="track"></span>Gluten-free version</label>`:
+      `<p class="gfnote" style="margin-top:2px"><b>Gluten free</b>Nothing to change — this one is gluten free as Anu wrote it${gi.c.length?", as long as the bought items below check out":""}.</p>`}
+    <ul class="ing">${ingLines(r,showGf).map((x,ix)=>`<li${x.was?' class="sw"':""}><input type="checkbox" id="ing${ix}"><label for="ing${ix}">${esc(x.text)}${x.was?`<span class="was">${esc(x.was)}</span>`:""}</label></li>`).join("")}</ul>
+    ${showGf&&gi.n.length?`<div class="gfnote"><b>Making it gluten free</b><ul>${gi.n.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+    ${gi.c.length?`<div class="gfcheck"><b>Check these labels</b><ul>${gi.c.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
     <h4>Method</h4>
     <ol class="steps">${r.m.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
     <p class="note">Tick ingredients off as you prep — ticks reset when you close the recipe.</p>`;
@@ -572,6 +779,8 @@ function openSheet(id){
     ev.target.classList.toggle("primary",favs.has(r.id));renderGrid();
   });
   sh.querySelector("[data-plandish]").addEventListener("click",()=>pickDay(r.id));
+  const sgf=sh.querySelector("#sheetGf");
+  if(sgf)sgf.addEventListener("change",ev=>openSheet(id,ev.target.checked));
   const ed=sh.querySelector("[data-editdish]");
   if(ed)ed.addEventListener("click",()=>{closeSheet();loadForm(r.id);goTab("add")});
   $("#overlay").classList.add("open");document.body.style.overflow="hidden";
@@ -677,7 +886,7 @@ $("#fq").addEventListener("keydown",e=>{if(e.key==="Enter")addFridge(e.target.va
 function ingCore(s){return s.toLowerCase()}
 function isPantry(s){const l=s.toLowerCase();return PANTRY.some(p=>l.includes(p))&&!QUICK.some(q=>l.includes(q))}
 function scoreRecipe(r){
-  const lines=r.i.filter(i=>!/^(sauce|dressing|filling|vagaar|syrup|icing|topping|coating|marinade|base|to serve|per |gravy|frosting|add last|braise|rice:|spinach:|liquidise|best recipe|or:|butter icing|lemington|red cake|dumplings|sweetcorn:|tawa:|green:|med:|red pepper:|chilli paste:|pad thai)/i.test(i.trim())||i.length>30);
+  const lines=ingLines(r,gfMode).map(x=>x.text).filter(i=>!/^(sauce|dressing|filling|vagaar|syrup|icing|topping|coating|marinade|base|to serve|per |gravy|frosting|add last|braise|rice:|spinach:|liquidise|best recipe|or:|butter icing|lemington|red cake|dumplings|sweetcorn:|tawa:|green:|med:|red pepper:|chilli paste:|pad thai)/i.test(i.trim())||i.length>30);
   const nonPantry=lines.filter(l=>!isPantry(l));
   if(!nonPantry.length)return null;
   const have=[],miss=[];
@@ -711,13 +920,13 @@ function renderShop(){
   DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=byId(id);if(r)items.push({d,r})}));
   if(!items.length){wrap.innerHTML=`<div class="empty"><div class="big">The list writes itself</div>Plan a few dishes in the Week Planner and every ingredient lands here, grouped by dish.</div>`;return}
   wrap.innerHTML=items.map(({d,r})=>`<div class="shop-group"><h3>${esc(r.n)}</h3><p class="gsub">${d} · notebook ${esc(r.p)}</p>
-    <ul class="ing">${r.i.map((it,ix)=>{const key=r.id+":"+ix;return `<li><input type="checkbox" data-tick="${key}" id="s${r.id}_${ix}" ${shopTicks.has(key)?"checked":""}><label for="s${r.id}_${ix}">${esc(it)}</label></li>`}).join("")}</ul></div>`).join("");
+    <ul class="ing">${ingLines(r,gfMode).map((x,ix)=>{const key=r.id+":"+ix;return `<li${x.was?' class="sw"':""}><input type="checkbox" data-tick="${key}" id="s${r.id}_${ix}" ${shopTicks.has(key)?"checked":""}><label for="s${r.id}_${ix}">${esc(x.text)}</label></li>`}).join("")}</ul></div>`).join("");
 }
 $("#shoplist").addEventListener("change",e=>{const t=e.target.closest("[data-tick]");if(!t)return;
   t.checked?shopTicks.add(t.dataset.tick):shopTicks.delete(t.dataset.tick);LS.set("ticks",[...shopTicks])});
 $("#copyListBtn").addEventListener("click",()=>{
   const lines=[];
-  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=byId(id);if(!r)return;lines.push(`${d} — ${r.n}`);r.i.forEach(i=>lines.push("  • "+i));lines.push("")}));
+  DAYS.forEach(d=>(plan[d]||[]).forEach(id=>{const r=byId(id);if(!r)return;lines.push(`${d} — ${r.n}`+(gfMode&&gfInfo(r).count?"  (gluten-free version)":""));ingLines(r,gfMode).forEach(x=>lines.push("  • "+x.text));lines.push("")}));
   if(!lines.length){toast("Plan some dishes first");return}
   navigator.clipboard.writeText(lines.join("\n")).then(()=>toast("Shopping list copied")).catch(()=>toast("Couldn't copy — long-press to select"));
 });
@@ -887,7 +1096,8 @@ $("#deleteBtn").addEventListener("click",async()=>{
   Object.keys(plan).forEach(d=>{plan[d]=plan[d].filter(x=>x!==draftId);if(!plan[d].length)delete plan[d]});
   LS.set("plan",plan);
   if(curCat==="✎ Yours"&&!custom.length)curCat="All";
-  resetForm();refreshCount();renderChips();renderGrid();renderWeek();renderFridge();
+  _gfCache.delete(draftId);
+  resetForm();refreshCount();renderGfBar();renderChips();renderGrid();renderWeek();renderFridge();
   toast("Recipe deleted");
 });
 $("#recipeForm").addEventListener("submit",e=>{
@@ -906,11 +1116,234 @@ $("#recipeForm").addEventListener("submit",e=>{
              i:ing,m:meth,own:true,p:"yours",ts:existing?existing.ts:Date.now()};
   const src=$("#fSrc").value.trim();if(src)rec.s=src;
   if(existing)Object.assign(existing,rec);else custom.unshift(rec);
+  _gfCache.delete(draftId);
   if(!saveCustom()){if(!existing)custom=custom.filter(c=>c.id!==draftId);return}
   const savedId=draftId;
-  refreshCount();renderChips();renderGrid();renderWeek();renderFridge();
+  refreshCount();renderGfBar();renderChips();renderGrid();renderWeek();renderFridge();
   toast(existing?"Recipe updated":"Added to the book");
   resetForm();goTab("recipes");openSheet(savedId);
+});
+
+/* ============ import a recipe from a link ============ */
+/* Recipe sites publish a machine-readable schema.org/Recipe block; that is the
+   good path. Failing that we read the page text and parse it like a human would.
+   Browsers cannot fetch other sites directly, so the page goes through a public
+   reader service. Nothing is saved — the form is filled in for you to check. */
+const READER="https://r.jina.ai/";   /* public reader; asked for raw HTML so the
+   machine-readable recipe block survives, with its plain-text mode as a backstop */
+function impSay(msg,kind){
+  const el=$("#impStatus");el.textContent=msg;
+  el.className="import-status on "+(kind||"work");
+}
+async function grab(url,ms,headers){
+  const ctl=new AbortController();
+  const t=setTimeout(()=>ctl.abort(),ms||20000);
+  try{
+    const res=await fetch(url,{signal:ctl.signal,redirect:"follow",headers:headers||{}});
+    if(!res.ok)throw new Error("HTTP "+res.status);
+    return await res.text();
+  }finally{clearTimeout(t)}
+}
+/* --- the good path: schema.org/Recipe embedded in the page --- */
+function findRecipeNode(node,seen){
+  seen=seen||new Set();
+  if(!node||typeof node!=="object"||seen.has(node))return null;
+  seen.add(node);
+  if(Array.isArray(node)){
+    for(const x of node){const f=findRecipeNode(x,seen);if(f)return f}
+    return null;
+  }
+  const t=node["@type"];
+  const isRecipe=t&&(Array.isArray(t)?t.some(x=>/recipe/i.test(x)):/recipe/i.test(String(t)));
+  if(isRecipe&&(node.recipeIngredient||node.ingredients))return node;
+  for(const k of Object.keys(node)){
+    const f=findRecipeNode(node[k],seen);if(f)return f;
+  }
+  return null;
+}
+function textOf(v){
+  if(v==null)return "";
+  if(typeof v==="string")return v;
+  if(Array.isArray(v))return v.map(textOf).filter(Boolean).join("\n");
+  if(typeof v==="object")return textOf(v.text||v.name||v.itemListElement||"");
+  return String(v);
+}
+function stripTags(h){
+  return String(h).replace(/<[^>]*>/g," ").replace(/&nbsp;/gi," ")
+    .replace(/&amp;/gi,"&").replace(/&lt;/gi,"<").replace(/&gt;/gi,">")
+    .replace(/&#(\d+);/g,(_,d)=>String.fromCharCode(+d))
+    .replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'")
+    .replace(/[ \t]+/g," ").trim();
+}
+function fromJsonLd(html){
+  const doc=new DOMParser().parseFromString(html,"text/html");
+  const blocks=[...doc.querySelectorAll('script[type="application/ld+json"]')];
+  for(const b of blocks){
+    let data;try{data=JSON.parse(b.textContent)}catch(e){continue}
+    const node=findRecipeNode(data);
+    if(!node)continue;
+    const ing=(node.recipeIngredient||node.ingredients||[]);
+    const steps=textOf(node.recipeInstructions).split("\n").map(x=>stripTags(x)).filter(Boolean);
+    const out={
+      name:stripTags(textOf(node.name)),
+      ing:(Array.isArray(ing)?ing:[ing]).map(x=>stripTags(textOf(x))).filter(Boolean),
+      method:steps,
+      tags:[].concat(node.recipeCuisine||[],node.recipeCategory||[],node.keywords?String(node.keywords).split(/\s*,\s*/):[])
+            .map(x=>stripTags(textOf(x))).filter(Boolean).slice(0,6),
+      source:stripTags(textOf(node.author&&(node.author.name||node.author)))||""
+    };
+    if(out.ing.length)return out;
+  }
+  return null;
+}
+/* --- middle path: pull the ingredient and method lists straight out of the markup --- */
+function fromDom(html){
+  const doc=new DOMParser().parseFromString(html,"text/html");
+  doc.querySelectorAll("script,style,noscript,nav,header,footer").forEach(n=>n.remove());
+  const grabSel=sel=>{
+    const seen=new Set(),out=[];
+    doc.querySelectorAll(sel).forEach(n=>{
+      const t=stripTags(n.textContent);
+      if(t&&!seen.has(t.toLowerCase())){seen.add(t.toLowerCase());out.push(t)}
+    });
+    return out;
+  };
+  const ing=grabSel('[itemprop="recipeIngredient"],[class*="ingredient" i] li,li[class*="ingredient" i]')
+    .filter(x=>x.length>1&&x.length<170);
+  const steps=grabSel('[itemprop="recipeInstructions"] li,[class*="instruction" i] li,[class*="method" i] li,[class*="direction" i] li,[class*="step" i] p')
+    .filter(x=>x.length>12&&x.length<900);
+  if(ing.length<2)return null;
+  const h1=doc.querySelector("h1");
+  return {name:h1?stripTags(h1.textContent).slice(0,90):"",ing:ing.slice(0,60),method:steps.slice(0,40),tags:[],source:""};
+}
+/* --- fallback: read it the way a person would --- */
+const QTY=/^\s*(?:[-*•▢]\s*)?(?:\d+[\d\/．.,\s]*|½|¼|¾|⅓|⅔|⅛|a |an |one |two |three |four |five |six |half )/i;
+const UNIT=/\b(cups?|tbsp|tablespoons?|tsp|teaspoons?|g|kg|grams?|ml|l|litres?|liters?|oz|lb|pinch|handful|cloves?|tins?|cans?|packets?|slices?|punnets?|sprigs?|bunch)\b/i;
+const ING_HEAD=/^(ingredients|you will need|what you need|shopping list)\b/i;
+const MET_HEAD=/^(method|instructions|directions|preparation|steps|how to|to make)\b/i;
+const SKIP=/^(print|save|share|jump to|rate|prep time|cook time|total time|servings?|serves|yield|makes|course|cuisine|calories|nutrition|advertisement|subscribe|comments?|related|you might also|follow|watch|shop|tags?|link in bio|full recipe|recipe below|credit|photo|video|a star rating|ratings?\b|loading|sign ?up|newsletter|cookie|accept all|skip to|read more|advertisement)\b/i;
+/* social-post noise: hashtag lines, bare @handles, emoji-only lines, "save this!" */
+const NOISE=/^(#|@)\S|^[\s\p{Extended_Pictographic}\u2600-\u27BF]+$|^(save|try) this\b|^\d+\s*(likes?|views?|comments?)\b/iu;
+const isNoise=L=>NOISE.test(L)||((L.match(/#/g)||[]).length>=2)||JUNK.test(L);
+/* markdown links, raw URLs, blob refs, video timestamps, player chrome */
+const JUNK=/\]\(|https?:\/\/|blob:|^\d{1,2}:\d{2}|\d{1,2}:\d{2}\s*\/\s*\d{1,2}:\d{2}|^\d+x$|playback|watch history|sign in to|^\[|autoplay|subscribe/i;
+function parseLooseText(raw){
+  /* the reader prefixes its own "Title:" / "URL Source:" / "Markdown Content:" lines */
+  raw=String(raw).replace(/^\s*(Title|URL Source|Published Time|Markdown Content|Warning):.*$/gim,"");
+  const lines=String(raw).replace(/\r/g,"").split("\n")
+    .map(x=>x.replace(/^[#>*\-•▪●\s]+/,"").replace(/\s+$/,""))
+    .filter(x=>x.length&&x.length<400);
+  let name="",ing=[],method=[],mode="";
+  // title: first markdown heading or the first substantial short line
+  const head=String(raw).split("\n").find(l=>/^#\s+\S/.test(l));
+  if(head)name=head.replace(/^#\s+/,"").trim();
+  for(let i=0;i<lines.length;i++){
+    const L=lines[i];
+    if(ING_HEAD.test(L)){mode="i";continue}
+    if(MET_HEAD.test(L)){mode="m";continue}
+    if(SKIP.test(L)||isNoise(L))continue;
+    if(!name&&L.length>3&&L.length<90&&!QTY.test(L)&&!/[.!?]$/.test(L)){name=L;continue}
+    const looksIng=(QTY.test(L)&&L.length<140)||(UNIT.test(L)&&L.length<120);
+    const looksStep=/^\d+[.)]\s+/.test(L)||(L.length>45&&/[.!]$/.test(L));
+    if(mode==="i"){ if(looksStep&&!looksIng&&L.length>60){mode="m";method.push(L.replace(/^\d+[.)]\s*/,""))} else ing.push(L); continue }
+    if(mode==="m"){ method.push(L.replace(/^\d+[.)]\s*/,"")); continue }
+    if(looksIng)ing.push(L); else if(looksStep)method.push(L.replace(/^\d+[.)]\s*/,""));
+  }
+  // if we never found a Method heading, split off the long sentences at the end
+  if(!method.length&&ing.length>4){
+    const tail=[];
+    while(ing.length&&ing[ing.length-1].length>70&&/[.!]$/.test(ing[ing.length-1]))tail.unshift(ing.pop());
+    method=tail;
+  }
+  return {name:name.slice(0,90),ing:ing.slice(0,60),method:method.slice(0,40),tags:[],source:""};
+}
+/* Does this actually look like a recipe? Video pages and articles happily yield
+   lines like "0:00 / 3:33" — without this they would be saved as ingredients. */
+function looksLikeRecipe(p){
+  if(!p)return false;
+  const ing=(p.ing||[]).filter(x=>x && x.length>2 && x.length<170 && !JUNK.test(x));
+  if(ing.length<4)return false;
+  const measured=ing.filter(x=>QTY.test(x)||UNIT.test(x)).length;
+  if(measured < Math.ceil(ing.length*0.5))return false;
+  const steps=(p.method||[]).filter(x=>x.length>25);
+  if(!steps.length)return false;
+  p.ing=ing;p.method=steps;
+  return true;
+}
+/* --- fill the form, never save --- */
+function applyImport(res,where){
+  if(!res||(!res.ing.length&&!res.method.length))return false;
+  if(res.name&&!JUNK.test(res.name))$("#fName").value=res.name;
+  if(res.ing.length)$("#fIng").value=res.ing.join("\n");
+  if(res.method.length)$("#fMeth").value=res.method.join("\n");
+  const tags=(res.tags||[]).filter(t=>t.length<24).slice(0,4);
+  if(tags.length)$("#fTags").value=tags.join(", ");
+  if(where&&!$("#fSrc").value)$("#fSrc").value=res.source?("From "+res.source):("From "+where);
+  $("#fName").focus();
+  return true;
+}
+function hostOf(u){try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return ""}}
+async function importFromUrl(raw){
+  let url=raw.trim();
+  if(!url)return;
+  if(!/^https?:\/\//i.test(url))url="https://"+url;
+  const host=hostOf(url);
+  if(!host){impSay("That does not look like a web address.","bad");return}
+  const social=/youtube\.com|youtu\.be|instagram\.com|tiktok\.com|facebook\.com|threads\.net|pinterest\./i.test(host);
+  const btn=$("#impBtn");btn.disabled=true;
+  impSay("Reading "+host+"\u2026 this can take a few seconds.","work");
+  let got=null,how="";
+  try{
+    /* raw markup first: it carries the machine-readable recipe block */
+    const html=await grab(READER+url,28000,{"x-respond-with":"html"});
+    if(html&&html.length>200){
+      got=fromJsonLd(html);              if(got)how="ld";
+      if(!got){const d=fromDom(html); if(d&&looksLikeRecipe(d)){got=d;how="dom"}}
+      if(!got){
+        const doc=new DOMParser().parseFromString(html,"text/html");
+        doc.querySelectorAll("script,style,nav,footer,header,noscript").forEach(n=>n.remove());
+        const txt=(doc.body&&(doc.body.innerText||doc.body.textContent))||"";
+        const loose=parseLooseText(txt);
+        if(looksLikeRecipe(loose)){got=loose;how="text"}
+      }
+    }
+  }catch(e){}
+  if(!got){
+    try{
+      const md=await grab(READER+url,25000);
+      const loose=parseLooseText(md);
+      if(looksLikeRecipe(loose)){got=loose;how="text"}
+    }catch(e){}
+  }
+  btn.disabled=false;
+  if(got&&applyImport(got,host)){
+    impSay(how==="ld"
+      ? "Got it \u2014 \u201c"+(got.name||"the recipe")+"\u201d, read straight off the page. Check it over and save."
+      : "Pulled out what I could from "+host+". Read through the ingredients and method before you save \u2014 this way is rougher.",
+      "good");
+    $("#pasteWrap").classList.remove("on");
+    return;
+  }
+  impSay(social
+    ? "Posts on "+host+" keep their text behind a login, so this usually will not work. Open the post, copy the caption, and paste it below."
+    : "I could not find a recipe on that page. Copy the recipe text and paste it below instead.",
+    "bad");
+  $("#pasteWrap").classList.add("on");
+  $("#impText").focus();
+}
+$("#impBtn").addEventListener("click",()=>importFromUrl($("#impUrl").value));
+$("#impUrl").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();importFromUrl(e.target.value)}});
+$("#pasteToggle").addEventListener("click",()=>{
+  const w=$("#pasteWrap");w.classList.toggle("on");
+  if(w.classList.contains("on"))$("#impText").focus();
+});
+$("#impTextBtn").addEventListener("click",()=>{
+  const t=$("#impText").value;
+  if(!t.trim()){impSay("Paste the recipe text first.","bad");return}
+  const p=parseLooseText(t);
+  if(looksLikeRecipe(p)&&applyImport(p,""))impSay("Read it — check the ingredients and method below.","good");
+  else if(p.ing.length&&applyImport(p,""))impSay("That was hard to read — I have put in what I found, but check it carefully.","good");
+  else impSay("I couldn’t find a recipe in that. Make sure the ingredients are one per line.","bad");
 });
 
 /* ============ backup & restore ============ */
@@ -984,7 +1417,8 @@ async function applyBackup(text){
   });
   const ok=saveCustom()&&savePhotos();
   LS.set("favs",[...favs]);LS.set("fridge",fridge);LS.set("plan",plan);
-  refreshCount();renderChips();renderGrid();renderWeek();renderFridge();renderFormShots();
+  _gfCache.clear();
+  refreshCount();renderGfBar();renderChips();renderGrid();renderWeek();renderFridge();renderFormShots();
   toast(ok?`Restored ${addedR} recipe${addedR===1?"":"s"} and ${addedP} photo${addedP===1?"":"s"}`
           :"Restored, but storage is nearly full");
 }
@@ -994,5 +1428,6 @@ async function applyBackup(text){
 const orphans=photos.filter(p=>p.r&&p.r[0]==="c"&&!custom.some(c=>c.id===p.r));
 if(orphans.length){photos=photos.filter(p=>orphans.indexOf(p)<0);savePhotos();orphans.forEach(p=>delFull(p.id))}
 resetForm();
+renderGfBar();
 renderChips();renderGrid();renderWeek();renderFridge();
 </script>
